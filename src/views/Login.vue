@@ -1,36 +1,45 @@
 <template>
 
-    <el-link class="student" type="info" :underline="false">
-        我是学生
-    </el-link>
-    <el-link class="teacher" type="info" :underline="false" @click="">
-        我是教师
-    </el-link>
-    <el-link class="admin" type="info" :underline="false" @click="">
-        我是管理员
-    </el-link>
-
     <div class="login-box">
         <div class="content">
-            <h2>登录</h2>
-            <el-form-item prop="username">
-                <el-input :prefix-icon="User" placeholder="请输入用户名" v-model="registerData.username" />
-            </el-form-item>
-            <el-form-item prop="password">
-                <el-input name="password" :prefix-icon="Lock" type="password" placeholder="请输入密码"
-                    v-model="registerData.password" />
-            </el-form-item>
-            <el-form-item>
-                <el-button class="button" type="primary" auto-insert-space @click="login">登录</el-button>
-            </el-form-item>
+            <h2>{{ identityMap[identity] + (isRegister ? '注册' : '登录') }}</h2>
+
+            <el-form ref="form" size="large" autocomplete="off" :rules="rules" :model="formData">
+                <el-form-item prop="username">
+                    <el-input class="form-item" :prefix-icon="User" placeholder="请输入用户名" v-model="formData.username" />
+                </el-form-item>
+                <el-form-item prop="password">
+                    <el-input class="form-item" name="password" :prefix-icon="Lock" type="password" placeholder="请输入密码"
+                        v-model="formData.password" />
+                </el-form-item>
+                <el-form-item prop="password" v-if="isRegister">
+                    <el-input class="form-item" name="password" :prefix-icon="Lock" type="password"
+                        placeholder="请再次输入密码" v-model="formData.repassword" />
+                </el-form-item>
+                <el-form-item>
+                    <el-button id="submit" class="form-item" type="primary" plain auto-insert-space @click="submit">
+                        {{ isRegister ? '注册' : '登录' }}
+                    </el-button>
+                </el-form-item>
+            </el-form>
         </div>
     </div>
+
+    <el-link class="student" type="info" :underline="false" @click="identity = 0">
+        我是学生
+    </el-link>
+    <el-link class="teacher" type="info" :underline="false" @click="identity = 1">
+        我是教师
+    </el-link>
+    <el-link class="admin" type="info" :underline="false" @click="identity = 2">
+        我是管理员
+    </el-link>
 
     <el-link class="forget" type="primary" :underline="false">
         忘记密码？
     </el-link>
-    <el-link class="register" type="info" :underline="false" @click="isRegister = true; clearRegisterData()">
-        注册
+    <el-link class="register" type="info" :underline="false" @click="isRegister = !isRegister; clearFormData()">
+        {{ isRegister ? '登录' : '注册' }}
     </el-link>
 
 
@@ -41,76 +50,87 @@ import { ref } from 'vue';
 import { User, Lock } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 
-//控制注册与登录表单的显示， 默认显示登录
-const isRegister = ref(false);
-
-//定义数据模型
-const registerData = ref({
-    username: '',
-    password: '',
-    repassword: ''
-});
-
-//密码校验
-const checkRePassword = (rule, value, callback) => {
-    if (value === '')
-        callback(new Error('亲，再次确认密码'));
-    else if (value !== registerData.value.password)
-        callback(new Error('亲，确保两次输入密码一致'));
-    else
-        callback();
-};
-
-//elementplus提供的校验规则
-//定义表单校验规则
-const rules = {
-    username: [
-        { required: true, message: '请输入用户名', trigger: 'blur' },
-        { min: 5, max: 16, message: '5-16位非空字符', trigger: 'blur' }
-    ],
-    password: [
-        { required: true, message: "请输入密码", trigger: 'blur' },
-        { min: 5, max: 16, message: "5-16位非空字符", trigger: 'blur' }
-    ],
-    repassword: [
-        { validator: checkRePassword, trigger: 'blur' }
-    ]
-};
+//导入封装好的api接口
+import { studentRegisterService, studentLoginService, teacherRegisterService, teacherLoginService, adminRegisterService, adminLoginService } from '@/api/account.js';
 
 import { useRouter } from 'vue-router';
 import { useTokenStore } from '@/stores/token.js';
 const tokenStore = useTokenStore();
 const router = useRouter();
 
-//导入封装好的api接口
-import { adminRegisterService, adminLoginService } from '@/api/admin.js';
+//控制登录身份 0:学生 1:教师 2:管理员
+const identity = ref(0);
+const identityMap = ref(['学生', '教师', '管理员']);
 
-const register = async () => {
-    let DataObj = {
-        username: registerData.value.username,
-        password: registerData.value.password
-    };
-    let result = await adminRegisterService(DataObj);
-    isRegister.value = false;
-    ElMessage.success('注册成功了亲');
+//控制注册与登录表单的显示，默认显示登录
+const isRegister = ref(false);
+
+//定义数据模型
+const formData = ref({
+    username: '',
+    password: '',
+    repassword: ''
+});
+
+//定义表单校验规则
+const rules = {
+    username: [
+        { required: true, message: '用户名不能为空', trigger: 'blur' },
+        { min: 5, max: 16, message: '5-16位非空字符', trigger: 'blur' }
+    ],
+    password: [
+        { required: true, message: "密码不能为空", trigger: 'blur' },
+        { min: 5, max: 16, message: "5-16位非空字符", trigger: 'blur' }
+    ],
+    repassword: [
+        {
+            validator: (rule, value, callback) => {
+                if (value === '')
+                    callback(new Error('请再次输入密码'));
+                else if (value !== formData.value.password)
+                    callback(new Error('两次输入密码不一致'));
+                else
+                    callback();
+            },
+            trigger: 'blur'
+        }
+    ]
 };
 
-const login = async () => {
-    let result = await adminLoginService(registerData.value);
-    console.log('login:' + result.data);
-    ElMessage.success('登录成功了亲');
-    tokenStore.setToken(result.data.message);
-    //console.log(result.data);
-    console.log("登录成功后看有没有" + tokenStore.token);
-    router.push('/');
-};
-
-const clearRegisterData = () => {
-    registerData.value = {
+const clearFormData = () => {
+    this.$refs.form.resetFields();
+    formData.value = {
         username: '',
         password: '',
         repassword: ''
     };
+};
+
+const submit = () => {
+    if (isRegister.value)
+        register();
+    else
+        login();
+};
+
+const register = async () => {
+    let DataObj = {
+        username: formData.value.username,
+        password: formData.value.password
+    };
+    let result = await adminRegisterService(DataObj);
+    isRegister.value = false;
+    ElMessage.success('注册成功');
+};
+
+const login = async () => {
+    let result = await adminLoginService(formData.value);
+    console.log('login:' + result.data);
+    ElMessage.success('登录成功');
+    tokenStore.setToken(result.data.message);
+    //console.log(result.data);
+    console.log("登录成功后看有没有" + tokenStore.token);
+    router.push('/');
 };
 </script>
 
@@ -183,6 +203,44 @@ body {
     background-color: #fff;
     border-radius: 50%;
     opacity: 0.9;
+}
+
+.login-box .content .form-item {
+    position: relative;
+    width: 225px;
+    box-shadow:
+        15px 15px 10px rgba(0, 0, 0, 0.05),
+        15px 10px 15px rgba(0, 0, 0, 0.025);
+}
+
+.login-box .content .form-item::before {
+    content: "";
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 65%;
+    height: 5px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+}
+
+#submit {
+    left: 25%;
+    width: 50%;
+    color: #fff;
+    border-radius: 25px;
+    background-color: #ff0f5b;
+    box-shadow:
+        inset 2px 5px 10px rgba(0, 0, 0, 0.1),
+        15px 15px 10px rgba(0, 0, 0, 0.05),
+        15px 10px 15px rgba(0, 0, 0, 0.025);
+    transition: 0.5s;
+}
+
+#submit:hover {
+    left: 0%;
+    width: 100%;
 }
 
 .el-link {

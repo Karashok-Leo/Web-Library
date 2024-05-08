@@ -1,37 +1,18 @@
 import request from '@/utils/request.js'
 
-//学生登录接口
-export const studentLoginService = (registerData) => {
+//用户登录接口
+export const userLoginService = (data) => {
+    return request.post('/userLogin', data)
 }
 
-//学生注册接口
-export const studentRegisterService = (DataObj) => {
-}
-
-//教师登录接口
-export const teacherLoginService = (registerData) => {
-}
-
-//教师注册接口
-export const teacherRegisterService = (DataObj) => {
+//用户注册接口
+export const userRegisterService = (data) => {
+    return request.post('/userRegister', data)
 }
 
 //管理员登录接口
-export const adminLoginService = (registerData) => {
-    const params = new URLSearchParams();
-    for (let key in registerData)
-        params.append(key, registerData[key])
-    return request.post('/tokens/login', params)
-}
-
-//管理员注册接口
-export const adminRegisterService = (DataObj) => {
-    //借助urlsearchParams完成传递
-    const params = new URLSearchParams()
-    for (let key in DataObj)
-        params.append(key, DataObj[key]);
-    console.log("register" + params)
-    return request.post('/admins/register', params)
+export const adminLoginService = (data) => {
+    return request.post('/adminLogin', data)
 }
 
 //密码修改

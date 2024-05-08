@@ -2,7 +2,7 @@
 
     <div class="login-box">
         <div class="content">
-            <h2>{{ (isAdmin ? '管理员' : (identity ? '教师' : '学生')) + (isRegister ? '注册' : '登录') }}</h2>
+            <h2>{{ (isAdmin ? '管理员' : '用户') + (isRegister ? '注册' : '登录') }}</h2>
 
             <el-form ref="loginForm" size="large" autocomplete="off" :rules="loginRules" :model="loginData"
                 v-if="!isRegister">
@@ -41,7 +41,7 @@
                 <div class="form-item" style="display: flex;">
                     <el-form-item>
                         <el-input name="verifyCode" :prefix-icon="Lock" type="text" placeholder="请输入验证码"
-                            v-model="registerData.verifyCode"/>
+                            v-model="registerData.verifyCode" />
                     </el-form-item>
                     <el-button id="sendCode" class="form-item" type="primary" plain auto-insert-space
                         :disabled="verifyCounting" @click="sendVerifyCode">
@@ -57,9 +57,6 @@
         </div>
     </div>
 
-    <el-link class="identity" type="info" :underline="false" v-if="!isAdmin" @click="identity = !identity">
-        {{ '我是' + (identity ? '学生' : '教师') }}
-    </el-link>
     <el-link class="admin" type="info" :underline="false"
         @click="isAdmin = !isAdmin; isRegister = false; clearFormData(); updateBackground()">
         {{ '我是' + (isAdmin ? '用户' : '管理员') }}
@@ -73,7 +70,6 @@
         {{ isRegister ? '登录' : '注册' }}
     </el-link>
 
-
 </template>
 
 <script setup>
@@ -82,7 +78,7 @@ import { User, Lock } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 
 //导入封装好的api接口
-import { studentRegisterService, studentLoginService, teacherRegisterService, teacherLoginService, adminRegisterService, adminLoginService } from '@/api/account.js';
+import { userLoginService, userRegisterService, adminLoginService } from '@/api/account.js';
 import { verifyCounting, startCounting, sendVerifyCodeService } from '@/api/verify';
 
 import { useRouter } from 'vue-router';
@@ -94,9 +90,6 @@ const updateBackground = () => {
     document.body.style.backgroundColor = isAdmin.value ? '#f5d9ea' : '#eff0f4';
 };
 
-//控制登录身份
-// false:学生  true:教师
-const identity = ref(false);
 // false:用户  true:管理员
 const isAdmin = ref(false);
 
@@ -175,29 +168,44 @@ const clearFormData = () => {
 
 const submit = () => {
     if (isRegister.value)
-        register();
+        userRegister();
+    else if (isAdmin.value)
+        adminLogin();
     else
-        login();
+        userLogin();
 };
 
-const login = async () => {
-    let result = await adminLoginService(formData.value);
-    console.log('login:' + result.data);
-    ElMessage.success('登录成功');
-    tokenStore.setToken(result.data.message);
-    //console.log(result.data);
-    console.log("登录成功后看有没有" + tokenStore.token);
-    router.push('/');
+const userLogin = async () => {
+    let result = await userLoginService(loginData.value);
+    if (result.success) {
+        ElMessage.success('登录成功');
+        tokenStore.setToken(result.data.accessToken);
+        router.push('/');
+    } else {
+        ElMessage.error('登录失败');
+    }
 };
 
-const register = async () => {
-    let DataObj = {
-        username: formData.value.username,
-        password: formData.value.password
-    };
-    let result = await adminRegisterService(DataObj);
-    isRegister.value = false;
-    ElMessage.success('注册成功');
+const userRegister = async () => {
+    let result = await userRegisterService(registerData.value);
+    if (result.success) {
+        ElMessage.success('注册成功');
+        isRegister.value = false;
+        clearFormData();
+    } else {
+        ElMessage.error('注册失败');
+    }
+};
+
+const adminLogin = async () => {
+    let result = await adminLoginService(loginData.value);
+    if (result.success) {
+        ElMessage.success('登录成功');
+        tokenStore.setToken(result.data.accessToken);
+        router.push('/');
+    } else {
+        ElMessage.error('登录失败');
+    }
 };
 
 const sendVerifyCode = async () => {
@@ -358,17 +366,17 @@ body {
     }
 }
 
-.identity {
-    top: 10%;
-    left: 27%;
-    background: #16e771;
-    border-radius: 48% 52% 34% 66% / 56% 49% 51% 44%;
-    box-shadow:
-        inset 10px 10px 10px rgba(1, 254, 127, 0.05),
-        15px 25px 10px rgba(1, 254, 47, 0.1),
-        15px 20px 20px rgba(1, 254, 64, 0.1),
-        inset -10px -10px 15px rgba(255, 255, 255, 0.5);
-}
+// .identity {
+//     top: 10%;
+//     left: 27%;
+//     background: #16e771;
+//     border-radius: 48% 52% 34% 66% / 56% 49% 51% 44%;
+//     box-shadow:
+//         inset 10px 10px 10px rgba(1, 254, 127, 0.05),
+//         15px 25px 10px rgba(1, 254, 47, 0.1),
+//         15px 20px 20px rgba(1, 254, 64, 0.1),
+//         inset -10px -10px 15px rgba(255, 255, 255, 0.5);
+// }
 
 .admin {
     top: 10%;
@@ -383,8 +391,8 @@ body {
 }
 
 .forget {
-    bottom: 10%;
-    right: 27%;
+    bottom: 32%;
+    right: 20%;
     background: #c61dff;
     border-radius: 44% 56% 65% 35% / 57% 58% 42% 43%;
     box-shadow:
@@ -396,7 +404,7 @@ body {
 
 .register {
     bottom: 10%;
-    left: 27%;
+    right: 27%;
     background: #01b4ff;
     color: #fff;
     border-radius: 49% 51% 52% 48% / 63% 59% 41% 37%;

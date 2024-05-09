@@ -16,7 +16,7 @@
                     </span>
           <template #dropdown>
             <el-dropdown-menu >
-              <el-dropdown-item command="password" :icon="EditPen">重置密码</el-dropdown-item>
+              <el-dropdown-item command="password" :icon="EditPen">修改个人信息</el-dropdown-item>
               <el-dropdown-item command="logout" :icon="SwitchButton">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -92,16 +92,16 @@
 import { ref } from 'vue';
 import {
   CaretBottom,
-  ChatLineRound,
-  Comment, EditPen,
+  Comment,
+  EditPen,
   Histogram,
   List,
-  Management,
   Notebook,
   Platform,
-  Promotion, SwitchButton,
+  Promotion,
+  SwitchButton,
   UserFilled,
-  View
+  View,
 } from "@element-plus/icons-vue";
 
 const collapsed = ref(false);

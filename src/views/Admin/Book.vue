@@ -3,183 +3,249 @@ import {
   Edit,
   Delete, Search
 } from '@element-plus/icons-vue'
-
 import { ref } from 'vue'
-
-//图书分类数据模型
-const categorys = ref([
-  {
-    "id": 3,
-    "categoryName": "美食",
-    "categoryAlias": "my",
-    "createTime": "2023-09-02 12:06:59",
-    "updateTime": "2023-09-02 12:06:59"
-  },
-  {
-    "id": 4,
-    "categoryName": "娱乐",
-    "categoryAlias": "yl",
-    "createTime": "2023-09-02 12:08:16",
-    "updateTime": "2023-09-02 12:08:16"
-  },
-  {
-    "id": 5,
-    "categoryName": "军事",
-    "categoryAlias": "js",
-    "createTime": "2023-09-02 12:08:33",
-    "updateTime": "2023-09-02 12:08:33"
-  }
-])
-
-//选中
-const checked = ref(false);
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
+import { Plus } from '@element-plus/icons-vue'
 
 //显示弹窗
 const dialogVisible=ref(false);
-
-//用户搜索时选中的分类id
-const categoryId = ref('')
-
-//用户搜索时选中的发布状态
-const state = ref('')
-
-//图书列表数据模型
-const books = ref([
-  {
-    "id": 5,
-    "title": "陕西旅游攻略",
-    "content": "兵马俑,华清池,法门寺,华山...爱去哪去哪...",
-    "coverImg": "https://big-event-gwd.oss-cn-beijing.aliyuncs.com/9bf1cf5b-1420-4c1b-91ad-e0f4631cbed4.png",
-    "state": "上架",
-    "categoryId": 2,
-    "createTime": "2023-09-03 11:55:30",
-    "updateTime": "2023-09-03 11:55:30",
-    "checked":false
-  },
-  {
-    "id": 5,
-    "title": "陕西旅游攻略",
-    "content": "兵马俑,华清池,法门寺,华山...爱去哪去哪...",
-    "coverImg": "https://big-event-gwd.oss-cn-beijing.aliyuncs.com/9bf1cf5b-1420-4c1b-91ad-e0f4631cbed4.png",
-    "state": "上架",
-    "categoryId": 2,
-    "createTime": "2023-09-03 11:55:30",
-    "updateTime": "2023-09-03 11:55:30",
-    "checked":false
-  },
-  {
-    "id": 5,
-    "title": "陕西旅游攻略",
-    "content": "兵马俑,华清池,法门寺,华山...爱去哪去哪...",
-    "coverImg": "https://big-event-gwd.oss-cn-beijing.aliyuncs.com/9bf1cf5b-1420-4c1b-91ad-e0f4631cbed4.png",
-    "state": "上架",
-    "categoryId": 2,
-    "createTime": "2023-09-03 11:55:30",
-    "updateTime": "2023-09-03 11:55:30",
-    "checked":false
-  },
-])
-
 //分页条数据模型
 const pageNum = ref(1)//当前页
 const total = ref(20)//总条数
 const pageSize = ref(3)//每页条数
-
-//当每页条数发生了变化，调用此函数
-const onSizeChange = (size) => {
-  pageSize.value = size
-  bookList()
-}
-//当前页码发生变化，调用此函数
-const onCurrentChange = (num) => {
-  pageNum.value = num
-  bookList()
-}
-
-
-/*/!*!//回显图书分类
-import { bookCategoryListService, bookListService, bookAddService } from '@/api/book.js'
-const bookCategoryList = async () => {
-  let result = await bookCategoryListService();
-
-  categorys.value = result.data;
-}*!/
-
-/!*
-//获取图书列表数据
-const bookList = async () => {
-  let params = {
-    pageNum: pageNum.value,
-    pageSize: pageSize.value,
-    categoryId: categoryId.value ? categoryId.value : null,
-    state: state.value ? state.value : null
-  }
-  let result = await bookListService(params);
-
-  //渲染视图
-  total.value = result.data.total;
-  books.value = result.data.items;
-
-  //处理数据,给数据模型扩展一个属性categoryName,分类名称
-  for (let i = 0; i < books.value.length; i++) {
-    let book = books.value[i];
-    for (let j = 0; j < categorys.value.length; j++) {
-      if (book.categoryId === categorys.value[j].id) {
-        book.categoryName = categorys.value[j].categoryName;
-      }
-    }
-  }
-}
-*!/
-bookCategoryList()
-bookList();*/
-
-import { QuillEditor } from '@vueup/vue-quill'
-import '@vueup/vue-quill/dist/vue-quill.snow.css'
-import { Plus } from '@element-plus/icons-vue'
-//控制抽屉是否显示
-const visibleDrawer = ref(false)
-//添加表单数据模型
-const bookModel = ref({
-  title: '',
-  categoryId: '',
-  coverImg: '',
-  content: '',
-  state: ''
-})
-
-
 //导入token
 import { useTokenStore } from '@/stores/token.js';
 const tokenStore = useTokenStore();
 
+//图书列表数据模型
+const Books = ref([
+  {
+    "book_id": 5,
+    "book_name": "无感之谜",
+    "author": "刘哈哈",
+    "text": "暂无",
+    "category_id": 332	,
+    "product_id": 2,
+    "number": 23,
+    "current_count": 23,
+    "borrow_count":14
+  },
+  {
+    "book_id": 5,
+    "book_name": "无感之谜",
+    "author": "刘哈哈",
+    "text": "暂无",
+    "category_id": 332	,
+    "product_id": 2,
+    "number": 23,
+    "current_count": 23,
+    "borrow_count":14
+  },
+  {
+    "book_id": 5,
+    "book_name": "无感之谜",
+    "author": "刘哈哈",
+    "text": "暂无",
+    "category_id": 332	,
+    "product_id": 2,
+    "number": 23,
+    "current_count": 23,
+    "borrow_count":14
+  },
+])
+//文章分类数据模型
+const categorys = ref([
+  {
+    "id": 3,
+    "category_name": "美食",
+  },
+  {
+    "id": 4,
+    "category_name": "娱乐",
+  },
+  {
+    "id": 5,
+    "category_name": "军事",
+  }
+])
+
+//搜索输入
+const input=ref();
+// 选中的数据项
+const selectedItems = ref([]);
+//控制抽屉是否显示
+const visibleDrawer = ref(false)
+//添加表单数据模型
+const bookModel = ref({
+  book_id: '',
+  book_name: '',
+  author: '',
+  text: '',
+  category_id: '',
+  product_id: '',
+  number: '',
+  current_count: '',
+  borrow_count:'',
+  image_url:''
+})
+
+//重置图书模型
+const getDefaultBookModel = () => ({
+  book_id: '',
+  book_name: '',
+  author: '',
+  text: '',
+  category_id: '',
+  product_id: '',
+  number: '',
+  current_count: '',
+  borrow_count:'',
+  image_url:''
+});
+
+//获取图书数据
+const getBooks =async () => {
+  try {
+    let result = await getBooksService();
+    //将评论数据存储到Comments中，用于渲染视图
+    Books.value = result.data;
+    //更新总条数，用于分页显示
+    total.value = result.data.length;
+  } catch (error) {
+    console.error("获取图书数据失败：", error);
+  }
+}
+getBooks()
+
+//回显文章分类
+const getCategorys = async () => {
+  let result = await articleCategorysService();
+
+  categorys.value = result.data;
+}
+getCategorys()
+
+//当每页条数发生了变化，调用此函数
+const onSizeChange = (size) => {
+  pageSize.value = size
+  //刷新列表
+  getBooks();
+}
+//当前页码发生变化，调用此函数
+const onCurrentChange = (num) => {
+  pageNum.value = num
+  //刷新列表
+  getBooks();
+}
+
 //上传成功的回调函数
 const uploadSuccess = (result) => {
-  bookModel.value.coverImg = result.data;
+  bookModel.value.image_url = result.data;
   console.log(result.data);
 }
 
-/*//添加图书
+//添加图书
 import { ElMessage } from 'element-plus'
-const addbook = async (clickState) => {
-  //把发布状态赋值给数据模型
-  bookModel.value.state = clickState;
-
+const addBook = async (clickState) => {
   //调用接口
   let result = await bookAddService(bookModel.value);
 
   ElMessage.success(result.msg ? result.msg : '添加成功');
 
+  //图书模型置空
+  bookModel.value = getDefaultBookModel();
+
   //让抽屉消失
   visibleDrawer.value = false;
 
   //刷新当前列表
-  bookList()
-}*/
+  await getBooks();
+}
 
+//取消添加图书
+const cancel = async () => {
+  //图书数据模型置空
+  bookModel.value = getDefaultBookModel();
+  //让抽屉消失
+  visibleDrawer.value = false;
+}
+
+//模糊搜索
+const inputSearch = async () => {
+  const keyword = input.value.trim(); // 转换为小写并去除首尾空格
+  if (!keyword) {
+    await getBooks(); // 如果搜索关键词为空，则显示所有评论列表
+    return; // 如果搜索关键词为空，直接返回，不执行后续操作
+  }
+  let result = await getBooks(); // 获取图书列表
+  try {
+    // 根据书名进行模糊搜索
+    total.value = result.data.filter(book =>
+        book.book_name.includes(keyword)
+    ).length;
+    Books.value = result.data.filter( book =>
+        book.book_name.includes(keyword)
+    );
+  } catch (error) {
+    console.error('搜索图书时出错：', error);
+    ElMessage.error(result.statusText || '搜索图书时出错：');
+  }
+  input.value = ''; // 清空输入框
+};
+
+//批量删除
+// 处理选中事件
+const handleSelectionChange = (selected) => {
+  selectedItems.value = selected;
+};
+// 删除选中项
+const deleteSelectedComments = () => {
+  // 调用后端删除数据的函数
+  deleteBookService(selectedItems.value);
+  // 清空选中项
+  selectedItems.value = [];
+  //刷新列表
+  getBooks();
+};
+
+//删除单本图书
+const deleteBook = (row) => {
+  // 调用后端删除数据的函数
+  deleteBookService(row);
+  //刷新列表
+  getBooks();
+};
+
+//修改图书信息
 //显示
-const handleOpen=()=>{
-  dialogVisible.value=true
+const handleOpen=async (row) => {
+
+  dialogVisible.value = true
+  //获取编辑图书
+  let result = await getBookService(row.book_id);
+  bookModel.value = result.data;
+}
+const editBook=async (id) => {
+  //编辑图书
+  try {
+    let result = await editBookService(bookModel.value.book_id, bookModel.value);
+    if (result.status === 200) {
+      ElMessage.success(result.statusText || '修改成功');
+    } else {
+      ElMessage.error(result.statusText || '修改失败');
+    }
+  } catch (error) {
+    console.error('编辑用户时出错：', error);
+    ElMessage.error('编辑用户时出错，请重试');
+  }
+}
+//弹窗关闭
+const handleClose=()=>{
+  //图书模型置空
+  bookModel.value = getDefaultBookModel();
+  //弹窗关闭
+  dialogVisible.value=false;
 }
 </script>
 <template>
@@ -192,6 +258,7 @@ const handleOpen=()=>{
         </div>
       </div>
     </template>
+
     <!-- 搜索表单 -->
     <el-form inline>
       <el-form-item >
@@ -199,109 +266,143 @@ const handleOpen=()=>{
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="inputSearch">搜索</el-button>
-        <el-button @click="deleteChecked">批量删除</el-button>
+        <el-button @click="deleteSelectedComments">批量删除</el-button>
       </el-form-item>
     </el-form>
 
     <!-- 图书列表 -->
-    <el-table :data="books" style="width: 100%">
-      <el-table-column label="选中" width="100">
-        <template #default="{ row }">
-          <div>
-            <el-checkbox v-model="checked" label="" size="large" />
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="图书标题" width="400" prop="title"></el-table-column>
-      <el-table-column label="分类" prop="categoryName"></el-table-column>
-      <el-table-column label="上架时间" prop="createTime"> </el-table-column>
-      <el-table-column label="状态" prop="state"></el-table-column>
+    <el-table
+        ref="multipleTableRef"
+        :data="Books.slice((pageNum-1)*pageSize,pageNum*pageSize)"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+        :cell-style="{ textAlign: 'center' }"
+        :header-cell-style="{ 'text-align': 'center' }"
+    >
+      <el-table-column type="selection" width="55" />
+      <el-table-column label="图书名称" width="100" prop="book_name"></el-table-column>
+      <el-table-column label="作者" prop="author"></el-table-column>
+      <el-table-column label="图书编号" prop="book_id"> </el-table-column>
+      <el-table-column label="图书简介" prop="text"></el-table-column>
+      <el-table-column label="库存数量" prop="number"></el-table-column>
+      <el-table-column label="借阅数量" prop="borrow_count"></el-table-column>
       <el-table-column label="操作" width="100">
         <template #default="{ row }">
-          <el-button :icon="Edit" circle plain type="primary" @click="handleOpen"></el-button>
-          <el-button :icon="Delete" circle plain type="danger"></el-button>
+          <el-button :icon="Edit" circle plain type="primary" @click="handleOpen(row)"></el-button>
+          <el-button :icon="Delete" circle plain type="danger" @click="deleteBook(row)"></el-button>
         </template>
       </el-table-column>
       <template #empty>
-        <el-empty description="没有数据" />
+        <el-empty description="暂无数据" />
       </template>
     </el-table>
 
     <!-- 分页条 -->
-    <el-pagination v-model:current-page="pageNum" v-model:page-size="pageSize" :page-sizes="[3, 5, 10, 15]"
-                   layout="jumper, total, sizes, prev, pager, next" background :total="total" @size-change="onSizeChange"
-                   @current-change="onCurrentChange" style="margin-top: 20px; justify-content: flex-end" />
+    <el-pagination
+        v-model:current-page="pageNum"
+        v-model:page-size="pageSize"
+        :page-sizes="[3, 5, 10, 15]"
+        layout="jumper, total, sizes, prev, pager, next"
+        background
+        :total="total"
+        @size-change="onSizeChange"
+        @current-change="onCurrentChange"
+        style="margin-top: 20px;
+        justify-content: flex-end"
+    />
 
     <!-- 抽屉 -->
     <el-drawer v-model="visibleDrawer" title="添加图书" direction="rtl" size="50%">
       <!-- 添加图书表单 -->
       <el-form :model="bookModel" label-width="100px">
-        <el-form-item label="图书标题">
-          <el-input v-model="bookModel.title" placeholder="请输入标题"></el-input>
+        <el-form-item label="图书名称">
+          <el-input v-model="bookModel.book_name" placeholder="请输入名称"></el-input>
+        </el-form-item>
+        <el-form-item label="作者">
+          <el-input v-model="bookModel.author" placeholder="请输入名字"></el-input>
         </el-form-item>
         <el-form-item label="图书分类">
           <el-select placeholder="请选择" v-model="bookModel.categoryId">
-            <el-option v-for="c in categorys" :key="c.id" :label="c.categoryName" :value="c.id">
+            <el-option v-for="c in categorys" :key="c.id" :label="c.category_name" :value="c.id">
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="图书封面">
           <el-upload class="avatar-uploader" :auto-upload="true" :show-file-list="false" action="/api/upload"
                      name="file" :headers="{ 'Authorization': tokenStore.token }" :on-success="uploadSuccess">
-            <img v-if="bookModel.coverImg" :src="bookModel.coverImg" class="avatar" />
+            <img v-if="bookModel.image_url" :src="bookModel.image_url" class="avatar" />
             <el-icon v-else class="avatar-uploader-icon">
               <Plus />
             </el-icon>
           </el-upload>
         </el-form-item>
-        <el-form-item label="图书内容">
+        <el-form-item label="图书简介">
           <div class="editor">
-            <quill-editor theme="snow" v-model:content="bookModel.content" contentType="html">
+            <quill-editor theme="snow" v-model:content="bookModel.text" contentType="html">
             </quill-editor>
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="addbook('已发布')">发布</el-button>
-          <el-button type="info" @click="addbook('草稿')">草稿</el-button>
+          <el-button type="primary" @click="addBook">添加</el-button>
+          <el-button type="info" @click="cancel">取消</el-button>
         </el-form-item>
       </el-form>
     </el-drawer>
 
-    <!-- 编辑用户弹窗 -->
-    <el-dialog v-model="dialogVisible" title="编辑用户信息" width="40%" :before-close="handleClose1">
+    <!-- 编辑图书弹窗 -->
+    <el-dialog v-model="dialogVisible" title="编辑图书信息" width="40%">
       <el-form
           ref="userEditForm"
-          :model="userModel"
+          :model="bookModel"
           label-width="100px"
           style="padding-right: 30px"
-          :rules = "userRules"
       >
-        <el-form-item label="用户名" prop="username">
+        <el-form-item label="图书名称" prop="username">
           <el-input
-              v-model="userModel.username"
+              v-model="bookModel.book_name"
               minlength="1"
               maxlength="10"
           ></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="password">
+        <el-form-item label="作者" prop="password">
           <el-input
-              v-model="userModel.password"
+              v-model="bookModel.password"
               style="width: 240px"
-              type="password"
-              placeholder="请输入密码"
+              placeholder="请输入名字"
               show-password
           />
         </el-form-item>
-        <el-form-item label="邮箱" prop="email">
+        <el-form-item label="借阅简介" prop="phone" >
           <el-input
-              v-model="userModel.email"
+              v-model="bookModel.text"
               minlength="1"
               maxlength="55"
           ></el-input>
         </el-form-item>
-        <el-form-item label="电话号码" prop="phone" >
+        <el-form-item label="图书编号" prop="email">
           <el-input
-              v-model="userModel.phone"
+              v-model="bookModel.book_id "
+              minlength="1"
+              maxlength="55"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="图书分类" prop="phone" >
+          <el-input
+              v-model="bookModel.category_id"
+              minlength="1"
+              maxlength="55"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="库存数量" prop="phone" >
+          <el-input
+              v-model="bookModel.number"
+              minlength="1"
+              maxlength="55"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="借阅数量" prop="phone" >
+          <el-input
+              v-model="bookModel.borrow_count"
               minlength="1"
               maxlength="55"
           ></el-input>
@@ -309,8 +410,8 @@ const handleOpen=()=>{
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="handleClose1(()=>{dialogVisible=false})">取消</el-button>
-          <el-button type="primary" @click="editUserF(); dialogVisible = false">确认</el-button>
+          <el-button @click="handleClose">取消</el-button>
+          <el-button type="primary" @click="editBook" >确认</el-button>
         </div>
       </template>
     </el-dialog>

@@ -26,25 +26,25 @@ const routes = [
         path: '/admin',
         component: Main,
         children: [
-            { path: '', redirect: 'overview' }, // 默认重定向到概览页面
-            { path: 'overview', component: Overview }, // 总览页面
-            { path: 'comment', component: Comment }, // 评论管理页面
-            { path: 'user', component: User }, // 用户管理页面
-            { path: 'book', component: Book }, // 图书管理页面
-            { path: 'borrow', component: Borrow }, // 借阅管理页面
-            { path: 'category', component: Category }, // 分类管理页面
-            { path: 'error-log', component: ErrorLog }, // 错误日志页面
-            { path: 'option-log', component: OptionLog }, // 操作日志页面
-            { path: 'login-log', component: LoginLog }, // 登录日志页面
+            { path: '/admin', redirect: '/admin/overview' }, // 默认重定向到概览页面
+            { path: '/admin/overview', component: Overview }, // 总览页面
+            { path: '/admin/comment', component: Comment }, // 评论管理页面
+            { path: '/admin/user', component: User }, // 用户管理页面
+            { path: '/admin/book', component: Book }, // 图书管理页面
+            { path: '/admin/borrow', component: Borrow }, // 借阅管理页面
+            { path: '/admin/category', component: Category }, // 分类管理页面
+            { path: '/admin/error-log', component: ErrorLog }, // 错误日志页面
+            { path: '/admin/option-log', component: OptionLog }, // 操作日志页面
+            { path: '/admin/login-log', component: LoginLog }, // 登录日志页面
         ]
     },
     {
-        path: '/',
+        path: '/user',
         component: LayoutVue,
         children: [
-            { path: '/profile', component: ProfileVue },
-            { path: '/borrow', component: BorrowVue },
-            { path: '/message', component: MessageVue }
+            { path: '/user/profile', component: ProfileVue },
+            { path: '/user/borrow', component: BorrowVue },
+            { path: '/user/message', component: MessageVue }
         ]
     }
 ]

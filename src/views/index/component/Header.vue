@@ -8,10 +8,10 @@
             <div class="gap" />
             <el-sub-menu class="my" index="my">
                 <template #title>我的</template>
-                <el-menu-item index="profile">个人资料</el-menu-item>
-                <el-menu-item index="borrow">借阅中心</el-menu-item>
-                <el-menu-item index="message">我的消息</el-menu-item>
-                <el-menu-item index="logout">退出登录</el-menu-item>
+                <el-menu-item index="/user/profile">个人资料</el-menu-item>
+                <el-menu-item index="/user/borrow">借阅中心</el-menu-item>
+                <el-menu-item index="/user/message">我的消息</el-menu-item>
+                <el-menu-item index="/user/logout">退出登录</el-menu-item>
             </el-sub-menu>
         </el-menu>
     </el-header>

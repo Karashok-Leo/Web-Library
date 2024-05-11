@@ -2,25 +2,25 @@
 
         <el-menu active-text-color="#ffd04b" background-color="#545c64" text-color="#fff" :default-active="$route.path"
             router>
-            <el-menu-item index="profile">
+            <el-menu-item index="/user/profile">
                 <el-icon>
                     <Edit />
                 </el-icon>
                 <span>个人资料</span>
             </el-menu-item>
-            <el-menu-item index="borrow">
+            <el-menu-item index="/user/borrow">
                 <el-icon>
                     <Collection />
                 </el-icon>
                 <span>借阅中心</span>
             </el-menu-item>
-            <el-menu-item index="message">
+            <el-menu-item index="/user/message">
                 <el-icon>
                     <Message />
                 </el-icon>
                 <span>我的消息</span>
             </el-menu-item>
-            <el-menu-item index="logout">
+            <el-menu-item index="/user/logout">
                 <el-icon>
                     <Setting />
                 </el-icon>

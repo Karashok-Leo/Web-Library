@@ -27,32 +27,32 @@
       <el-aside width="200px">
         <div class="el-aside__logo"></div>
         <el-menu active-text-color="#ffd04b" background-color="#232323"  text-color="#fff" router>
-          <el-menu-item index="/Overview">
+          <el-menu-item index="/admin/overview">
             <el-icon><View />
             </el-icon>
             <span>总览</span>
           </el-menu-item>
-          <el-menu-item index="/Borrow">
+          <el-menu-item index="/admin/borrow">
             <el-icon><List />
             </el-icon>
             <span>借阅管理</span>
           </el-menu-item>
-          <el-menu-item index="/Book">
+          <el-menu-item index="/admin/book">
             <el-icon><Notebook />
             </el-icon>
             <span>图书管理</span>
           </el-menu-item>
-          <el-menu-item index="/Comment">
+          <el-menu-item index="/admin/comment">
             <el-icon><Comment />
             </el-icon>
             <span>评论管理</span>
           </el-menu-item>
-          <el-menu-item index="/Category">
+          <el-menu-item index="/admin/category">
             <el-icon><Histogram />
             </el-icon>
             <span>分类管理</span>
           </el-menu-item>
-          <el-menu-item index="/User">
+          <el-menu-item index="/admin/user">
             <el-icon><UserFilled />
             </el-icon>
             <span>用户管理</span>
@@ -65,15 +65,15 @@
               <i class="el-icon-folder"></i>
               <span>日志管理</span>
             </template>
-            <el-menu-item index="/LoginLog">
+            <el-menu-item index="/admin/login-log">
               <i class="el-icon-s-operation"></i>
               <span>登录日志</span>
             </el-menu-item>
-            <el-menu-item index="/OptionLog">
+            <el-menu-item index="/admin/option-log">
               <i class="el-icon-s-operation"></i>
               <span>操作日志</span>
             </el-menu-item>
-            <el-menu-item index="/ErrorLog">
+            <el-menu-item index="/admin/error-log">
               <i class="el-icon-s-operation"></i>
               <span>错误日志</span>
             </el-menu-item>

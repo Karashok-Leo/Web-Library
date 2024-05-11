@@ -220,13 +220,12 @@ const deleteBook = (row) => {
 //修改图书信息
 //显示
 const handleOpen=async (row) => {
-
   dialogVisible.value = true
   //获取编辑图书
-  let result = await getBookService(row.book_id);
-  bookModel.value = result.data;
+  bookModel.value = row;
+
 }
-const editBook=async (id) => {
+const editBook=async () => {
   //编辑图书
   try {
     let result = await editBookService(bookModel.value.book_id, bookModel.value);
@@ -235,11 +234,13 @@ const editBook=async (id) => {
     } else {
       ElMessage.error(result.statusText || '修改失败');
     }
+    dialogVisible.value = false;
   } catch (error) {
     console.error('编辑用户时出错：', error);
     ElMessage.error('编辑用户时出错，请重试');
   }
 }
+
 //弹窗关闭
 const handleClose=()=>{
   //图书模型置空
@@ -327,6 +328,13 @@ const handleClose=()=>{
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="库存数量" prop="phone" >
+          <el-input
+              v-model="bookModel.number"
+              minlength="1"
+              maxlength="55"
+          ></el-input>
+        </el-form-item>
         <el-form-item label="图书封面">
           <el-upload class="avatar-uploader" :auto-upload="true" :show-file-list="false" action="/api/upload"
                      name="file" :headers="{ 'Authorization': tokenStore.token }" :on-success="uploadSuccess">
@@ -364,12 +372,11 @@ const handleClose=()=>{
               maxlength="10"
           ></el-input>
         </el-form-item>
-        <el-form-item label="作者" prop="password">
+        <el-form-item label="作者" prop="author">
           <el-input
-              v-model="bookModel.password"
+              v-model="bookModel.author"
               style="width: 240px"
               placeholder="请输入名字"
-              show-password
           />
         </el-form-item>
         <el-form-item label="借阅简介" prop="phone" >

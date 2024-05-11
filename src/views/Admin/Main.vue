@@ -1,5 +1,4 @@
 <template>
-
   <el-container id="components-layout-demo-custom-trigger">
     <el-header style="background: #fff; padding: 0">
       <div class="header">
@@ -28,32 +27,32 @@
       <el-aside width="200px">
         <div class="el-aside__logo"></div>
         <el-menu active-text-color="#ffd04b" background-color="#232323"  text-color="#fff" router>
-          <el-menu-item index="/category">
+          <el-menu-item index="/Overview">
             <el-icon><View />
             </el-icon>
             <span>总览</span>
           </el-menu-item>
-          <el-menu-item index="/order">
+          <el-menu-item index="/Borrow">
             <el-icon><List />
             </el-icon>
             <span>借阅管理</span>
           </el-menu-item>
-          <el-menu-item index="/user">
+          <el-menu-item index="/Book">
             <el-icon><Notebook />
             </el-icon>
             <span>图书管理</span>
           </el-menu-item>
-          <el-menu-item index="/user">
+          <el-menu-item index="/Comment">
             <el-icon><Comment />
             </el-icon>
             <span>评论管理</span>
           </el-menu-item>
-          <el-menu-item index="/user">
+          <el-menu-item index="/Category">
             <el-icon><Histogram />
             </el-icon>
             <span>分类管理</span>
           </el-menu-item>
-          <el-menu-item index="/user">
+          <el-menu-item index="/User">
             <el-icon><UserFilled />
             </el-icon>
             <span>用户管理</span>
@@ -66,15 +65,15 @@
               <i class="el-icon-folder"></i>
               <span>日志管理</span>
             </template>
-            <el-menu-item index="loginLog">
+            <el-menu-item index="/LoginLog">
               <i class="el-icon-s-operation"></i>
               <span>登录日志</span>
             </el-menu-item>
-            <el-menu-item index="opLog">
+            <el-menu-item index="/OptionLog">
               <i class="el-icon-s-operation"></i>
               <span>操作日志</span>
             </el-menu-item>
-            <el-menu-item index="errorLog">
+            <el-menu-item index="/ErrorLog">
               <i class="el-icon-s-operation"></i>
               <span>错误日志</span>
             </el-menu-item>
@@ -87,7 +86,6 @@
     </el-container>
   </el-container>
 </template>
-
 <script setup>
 import { ref } from 'vue';
 import {
@@ -104,28 +102,32 @@ import {
   View,
 } from "@element-plus/icons-vue";
 
-const collapsed = ref(false);
-const selectedKeys = ref([]);
-const logo = '/path/to/logo.png'; // 替换为你的 logo 图片路径
 const userStore=ref({
   admin_user_name: 'Admin', // 替换为你的管理员用户名
 });
-
-const handlePreview = () => {
-  // 实现前台预览功能的方法
-};
 
 const handleLogout = () => {
   // 实现退出登录功能的方法
 };
 
 const handleClick = (index) => {
-  // 处理菜单点击事件的方法
-  console.log('Clicked menu item index:', index);
+  // 导航到相应的路由路径
+  switch (index) {
+    case '/category':
+      this.$router.push({ path: '/category' });
+      break;
+    case '/order':
+      this.$router.push({ path: '/order' });
+      break;
+    case '/user':
+      this.$router.push({ path: '/user' });
+      break;
+      // 添加其他菜单项的处理逻辑
+    default:
+      break;
+  }
 };
 </script>
-
-
 <style scoped>
 /* 添加自定义样式 */
 .header {

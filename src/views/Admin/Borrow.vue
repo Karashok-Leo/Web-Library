@@ -1,94 +1,125 @@
 <script setup>
 import {
-  Edit,
-  Delete, Search
+ Search
 } from '@element-plus/icons-vue'
-
 import { ref } from 'vue'
-
-//图书分类数据模型
-const categorys = ref([
+import {ElMessage} from "element-plus";
+//借阅列表数据
+const borrowBooks = ref([
   {
-    "id": 3,
-    "categoryName": "美食",
-    "categoryAlias": "my",
-    "createTime": "2023-09-02 12:06:59",
-    "updateTime": "2023-09-02 12:06:59"
-  },
-  {
-    "id": 4,
-    "categoryName": "娱乐",
-    "categoryAlias": "yl",
-    "createTime": "2023-09-02 12:08:16",
-    "updateTime": "2023-09-02 12:08:16"
-  },
-  {
-    "id": 5,
-    "categoryName": "军事",
-    "categoryAlias": "js",
-    "createTime": "2023-09-02 12:08:33",
-    "updateTime": "2023-09-02 12:08:33"
-  }
-])
-
-
-//图书列表数据模型
-const books = ref([
-  {
-    "id": 5,
-    "title": "陕西旅游攻略",
-    "content": "兵马俑,华清池,法门寺,华山...爱去哪去哪...",
-    "coverImg": "https://big-event-gwd.oss-cn-beijing.aliyuncs.com/9bf1cf5b-1420-4c1b-91ad-e0f4631cbed4.png",
-    "state": "上架",
+    "book_id": 5,
+    "book_name": "无感之谜",
+    "user_name": "28038329@qq.com",
+    "state": "已还",
     "categoryId": 2,
-    "createTime": "2023-09-03 11:55:30",
-    "updateTime": "2023-09-03 11:55:30",
-    "checked":false
+    "borrowTime": "2023-09-03 11:55:30",
+    "backTime": "2023-09-03 11:55:30",
   },
   {
-    "id": 5,
-    "title": "陕西旅游攻略",
-    "content": "兵马俑,华清池,法门寺,华山...爱去哪去哪...",
-    "coverImg": "https://big-event-gwd.oss-cn-beijing.aliyuncs.com/9bf1cf5b-1420-4c1b-91ad-e0f4631cbed4.png",
-    "state": "上架",
+    "book_id": 5,
+    "book_name": "生活图书25",
+    "user_name": "1010177289@qq.com",
+    "state": "借出",
     "categoryId": 2,
-    "createTime": "2023-09-03 11:55:30",
-    "updateTime": "2023-09-03 11:55:30",
-    "checked":false
+    "borrowTime": "2023-09-03 11:55:30",
+    "backTime": "2023-09-03 11:55:30",
   },
   {
-    "id": 5,
-    "title": "陕西旅游攻略",
-    "content": "兵马俑,华清池,法门寺,华山...爱去哪去哪...",
-    "coverImg": "https://big-event-gwd.oss-cn-beijing.aliyuncs.com/9bf1cf5b-1420-4c1b-91ad-e0f4631cbed4.png",
-    "state": "上架",
+    "book_id": 5,
+    "book_name": "生活图书27",
+    "user_name": "111199",
+    "state": "已还",
     "categoryId": 2,
-    "createTime": "2023-09-03 11:55:30",
-    "updateTime": "2023-09-03 11:55:30",
-    "checked":false
+    "borrowTime": "2023-09-03 11:55:30",
+    "backTime": "2023-09-03 11:55:30",
   },
 ])
-
+//借阅列表数据模型
+const borrowBooksModle = ref([
+])
+//搜索输入
+const input=ref();
 //分页条数据模型
 const pageNum = ref(1)//当前页
 const total = ref(20)//总条数
 const pageSize = ref(3)//每页条数
+// 假设 statusFilters 包含所有可能的状态过滤器
+const statusFilters = [
+  { text: '借出', value: '借出' },
+  { text: '已还', value: '已还' },
+];
+
+// 获取所有分类列表
+const fetchBorrowBooks = async () => {
+  try {
+    const result = await borrowBooksListService()
+    borrowBooks.value = result.data
+  } catch (error) {
+    console.error('Failed to fetch categories:', error)
+    ElMessage.error('获取分类列表失败')
+  }
+}
+fetchBorrowBooks()
 
 //当每页条数发生了变化，调用此函数
 const onSizeChange = (size) => {
   pageSize.value = size
-  bookList()
+  fetchBorrowBooks()
 }
 //当前页码发生变化，调用此函数
 const onCurrentChange = (num) => {
   pageNum.value = num
-  bookList()
+  fetchBorrowBooks()
 }
 
-//显示
-const handleOpen=()=>{
-  dialogVisible.value=true
-}
+//模糊搜索
+const inputSearch = async () => {
+  const keyword = input.value.trim(); // 转换为小写并去除首尾空格
+  if (!keyword) {
+    await fetchBorrowBooks(); // 如果搜索关键词为空，则显示所有列表
+    return; // 如果搜索关键词为空，直接返回，不执行后续操作
+  }
+  let result = await getBorrowBooks(); // 获取图书列表
+  try {
+    // 根据书名进行模糊搜索
+    total.value = result.data.filter(book =>
+        book.book_name.includes(keyword)
+    ).length;
+    borrowBooks.value = result.data.filter( book =>
+        book.book_name.includes(keyword)
+    );
+  } catch (error) {
+    console.error('搜索图书时出错：', error);
+    ElMessage.error(result.statusText || '搜索图书时出错：');
+  }
+  input.value = ''; // 清空输入框
+};
+
+// 过滤器方法
+const filterTag = (value, row) => {
+  // 根据状态过滤
+  return row.state === value;
+};
+
+// 还书操作
+const backBook = (row) => {
+  // 执行还书操作
+  row.state="已还";
+  editBorrowBooks(row);
+  fetchBorrowBooks();
+};
+
+// 延期操作
+const delayTime = (row) => {
+  // 执行延期操作
+  // 将日期字符串解析为 Date 对象
+  const date = new Date(row.backTime);
+  date.setHours(date.getDay() + 30);
+  // 将新日期对象转换为字符串
+  row.backTime= date.toISOString();
+  delayBorrowBooks(row);
+  fetchBorrowBooks();
+};
 </script>
 <template>
   <el-card class="page-container">
@@ -97,6 +128,7 @@ const handleOpen=()=>{
         <span>借阅管理</span>
       </div>
     </template>
+
     <!-- 搜索表单 -->
     <el-form inline>
       <el-form-item >
@@ -107,53 +139,56 @@ const handleOpen=()=>{
       </el-form-item>
     </el-form>
 
-    <!-- 图书列表 -->
+    <!-- 借阅列表 -->
     <el-table
         ref="multipleTableRef"
-        :data="books"
+        :data="borrowBooks"
         style="width: 100%"
-        @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" />
       <el-table-column label="序号" type="index"  prop="index" width="60"/>
-      <el-table-column label="用户" width="400" prop="title"></el-table-column>
-      <el-table-column label="图书" prop="categoryName"></el-table-column>
+      <el-table-column label="用户" width="400" prop="user_name"></el-table-column>
+      <el-table-column label="图书" prop="book_name"></el-table-column>
       <el-table-column
-          prop="statues"
+          prop="state"
           label="状态"
           width="100"
-          :filters="[
-        { text: '借出', value: '借出' },
-        { text: '已还', value: '已还' },
-      ]"
+          :filters="statusFilters"
           :filter-method="filterTag"
           filter-placement="bottom-end"
       >
         <template #default="scope">
-          <el-tag
-              :type="scope.row.tag === '借出' ? '' : 'success'"
-              disable-transitions
-          >{{ scope.row.tag }}</el-tag
-          >
+          <el-tag :type="scope.row.state === '借出' ? 'danger' : 'success'" disable-transitions>
+            {{ scope.row.state }}
+          </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="借出时间" prop="state"></el-table-column>
-      <el-table-column label="应还时间" prop="state"></el-table-column>
+      <el-table-column label="借出时间" prop="borrowTime"></el-table-column>
+      <el-table-column label="应还时间" prop="backTime"></el-table-column>
       <el-table-column label="操作" width="100">
         <template #default="{ row }">
-          <el-button circle plain type="primary" @click="handleOpen">还书</el-button>
-          <el-button circle plain type="primary">延期</el-button>
+          <el-button circle plain type="primary" @click="backBook(row)">还书</el-button>
+          <el-button circle plain type="primary" @click="delayTime(row)">延期</el-button>
         </template>
       </el-table-column>
       <template #empty>
-        <el-empty description="没有数据" />
+        <el-empty description="暂无数据" />
       </template>
     </el-table>
 
     <!-- 分页条 -->
-    <el-pagination v-model:current-page="pageNum" v-model:page-size="pageSize" :page-sizes="[3, 5, 10, 15]"
-                   layout="jumper, total, sizes, prev, pager, next" background :total="total" @size-change="onSizeChange"
-                   @current-change="onCurrentChange" style="margin-top: 20px; justify-content: flex-end" />
+    <el-pagination
+        v-model:current-page="pageNum"
+        v-model:page-size="pageSize"
+        :page-sizes="[3, 5, 10, 15]"
+        layout="jumper, total, sizes, prev, pager, next"
+        background
+        :total="total"
+        @size-change="onSizeChange"
+        @current-change="onCurrentChange"
+        style="margin-top: 20px;
+        justify-content: flex-end"
+    />
   </el-card>
 </template>
 <style lang="scss" scoped>
@@ -165,38 +200,6 @@ const handleOpen=()=>{
     display: flex;
     align-items: center;
     justify-content: space-between;
-  }
-}
-
-/* 抽屉样式 */
-.avatar-uploader {
-  :deep() {
-    .avatar {
-      width: 178px;
-      height: 178px;
-      display: block;
-    }
-
-    .el-upload {
-      border: 1px dashed var(--el-border-color);
-      border-radius: 6px;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      transition: var(--el-transition-duration-fast);
-    }
-
-    .el-upload:hover {
-      border-color: var(--el-color-primary);
-    }
-
-    .el-icon.avatar-uploader-icon {
-      font-size: 28px;
-      color: #8c939d;
-      width: 178px;
-      height: 178px;
-      text-align: center;
-    }
   }
 }
 

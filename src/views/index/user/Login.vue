@@ -10,11 +10,11 @@
                     <el-input class="form-item" :prefix-icon="User" placeholder="请输入用户名" v-model="loginData.username" />
                 </el-form-item>
                 <el-form-item prop="password">
-                    <el-input class="form-item" name="password" :prefix-icon="Lock" type="password" placeholder="请输入密码"
+                    <el-input class="form-item" :prefix-icon="Lock" type="password" placeholder="请输入密码"
                         v-model="loginData.password" />
                 </el-form-item>
                 <el-form-item>
-                    <el-button id="submit" class="form-item" type="primary" plain auto-insert-space @click="submit">
+                    <el-button id="submit" class="form-item" type="primary" plain auto-insert-space @click="submit(loginForm)">
                         登录
                     </el-button>
                 </el-form-item>
@@ -27,29 +27,28 @@
                         v-model="registerData.username" />
                 </el-form-item>
                 <el-form-item prop="password">
-                    <el-input class="form-item" name="password" :prefix-icon="Lock" type="password" placeholder="请输入密码"
+                    <el-input class="form-item" :prefix-icon="Lock" type="password" placeholder="请输入密码"
                         v-model="registerData.password" />
                 </el-form-item>
-                <el-form-item prop="password">
-                    <el-input class="form-item" name="password" :prefix-icon="Lock" type="password"
-                        placeholder="请再次输入密码" v-model="registerData.repassword" />
+                <el-form-item prop="repassword">
+                    <el-input class="form-item" :prefix-icon="Lock" type="password" placeholder="请再次输入密码"
+                        v-model="registerData.repassword" />
                 </el-form-item>
                 <el-form-item prop="email">
-                    <el-input class="form-item" name="email" :prefix-icon="Lock" type="email" placeholder="请输入邮箱"
+                    <el-input class="form-item" :prefix-icon="Message" type="email" placeholder="请输入邮箱"
                         v-model="registerData.email" />
                 </el-form-item>
                 <div class="form-item" style="display: flex;">
                     <el-form-item>
-                        <el-input name="verifyCode" :prefix-icon="Lock" type="text" placeholder="请输入验证码"
-                            v-model="registerData.verifyCode" />
+                        <el-input :prefix-icon="Key" type="text" placeholder="请输入验证码" v-model="registerData.captcha" />
                     </el-form-item>
                     <el-button id="sendCode" class="form-item" type="primary" plain auto-insert-space
-                        :disabled="verifyCounting" @click="sendVerifyCode">
-                        {{ verifyCounting ? verifyCounting + '秒后重新获取' : '发送验证码' }}
+                        :disabled="verifyCounting > 0" @click="sendVerifyCode">
+                        {{ verifyCounting > 0 ? verifyCounting + '秒后重新获取' : '发送验证码' }}
                     </el-button>
                 </div>
                 <el-form-item>
-                    <el-button id="submit" class="form-item" type="primary" plain auto-insert-space @click="submit">
+                    <el-button id="submit" class="form-item" type="primary" plain auto-insert-space @click="submit(registerForm)">
                         注册
                     </el-button>
                 </el-form-item>
@@ -74,7 +73,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { User, Lock } from '@element-plus/icons-vue';
+import { User, Lock, Message, Key } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 
 //导入封装好的api接口
@@ -89,6 +88,9 @@ const router = useRouter();
 const updateBackground = () => {
     document.body.style.backgroundColor = isAdmin.value ? '#f5d9ea' : '#eff0f4';
 };
+
+const loginForm = ref(null);
+const registerForm = ref(null);
 
 // false:用户  true:管理员
 const isAdmin = ref(false);
@@ -108,7 +110,7 @@ const registerData = ref({
     password: '',
     repassword: '',
     email: '',
-    verifyCode: ''
+    captcha: ''
 });
 
 //定义登录表单校验规则
@@ -136,12 +138,16 @@ const registerRules = {
     repassword: [
         {
             validator: (rule, value, callback) => {
-                if (value === '')
-                    callback(new Error('请再次输入密码'));
-                else if (value !== formData.value.password)
-                    callback(new Error('两次输入密码不一致'));
-                else
-                    callback();
+                switch (value) {
+                    case '':
+                        callback(new Error('请再次输入密码'));
+                        break;
+                    case registerData.value.password:
+                        callback();
+                        break;
+                    default:
+                        callback(new Error('两次输入密码不一致'));
+                }
             },
             trigger: 'blur'
         }
@@ -162,22 +168,30 @@ const clearFormData = () => {
         password: '',
         repassword: '',
         email: '',
-        verifyCode: ''
+        captcha: ''
     };
 };
 
-const submit = () => {
-    if (isRegister.value)
-        userRegister();
-    else if (isAdmin.value)
-        adminLogin();
-    else
-        userLogin();
+const submit = (form) => {
+    if (!form) {
+        ElMessage.error('表单不存在！');
+        return;
+    }
+    form.validate((valid) => {
+        if (valid) {
+            if (isRegister.value)
+                userRegister();
+            else if (isAdmin.value)
+                adminLogin();
+            else
+                userLogin();
+        } else ElMessage.error('请正确填写信息');
+    });
 };
 
 const userLogin = async () => {
     let result = await userLoginService(loginData.value);
-    if (result.success) {
+    if (result.data.success) {
         ElMessage.success('登录成功');
         tokenStore.setToken(result.data.accessToken);
         router.push('/');
@@ -187,8 +201,15 @@ const userLogin = async () => {
 };
 
 const userRegister = async () => {
-    let result = await userRegisterService(registerData.value);
-    if (result.success) {
+    let data = {
+        username: registerData.value.username,
+        password: registerData.value.password,
+        email: registerData.value.email,
+        captcha: registerData.value.captcha,
+        status: 0
+    };
+    let result = await userRegisterService(data);
+    if (result.data.success) {
         ElMessage.success('注册成功');
         isRegister.value = false;
         clearFormData();
@@ -199,7 +220,7 @@ const userRegister = async () => {
 
 const adminLogin = async () => {
     let result = await adminLoginService(loginData.value);
-    if (result.success) {
+    if (result.data.success) {
         ElMessage.success('登录成功');
         tokenStore.setToken(result.data.accessToken);
         router.push('/');
@@ -209,9 +230,10 @@ const adminLogin = async () => {
 };
 
 const sendVerifyCode = async () => {
-    // let result = await sendVerifyCodeService(registerData.value.email);
-    // console.log('sendVerifyCode:' + result.data);
-    if (/* result.data.code === 200 */true) {
+
+    let result = await sendVerifyCodeService(registerData.value.email, 0);
+    console.log(result);
+    if (result.data.success) {
         startCounting();
         ElMessage.success('验证码发送成功');
     } else

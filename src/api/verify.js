@@ -1,4 +1,5 @@
 import { ref } from 'vue';
+import request from '@/utils/request';
 
 // 验证码倒计时
 export const verifyCounting = ref(0);
@@ -15,9 +16,5 @@ export const startCounting = () => {
     }, 1000);
 };
 
-// 发送验证码
-export const sendVerifyCodeService = (email) => {
-    // const params = new URLSearchParams();
-    // params.append('email', email);
-    // return request.post('/admins/sendVerifyCode', params);
-};
+// 发送验证码 0:注册 1:登录
+export const sendVerifyCodeService = (email, mode) => request.get(`/captcha?email=${email}&mode=${mode}`);

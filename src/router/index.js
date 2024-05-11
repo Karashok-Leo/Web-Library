@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 //导入组件
-import LoginVue from '@/views/Login.vue'
+import LoginVue from '@/views/index/user/Login.vue'
 import Main from '@/views/Admin/Main.vue'
 import Comment from '@/views/Admin/Comment.vue'
 import Overview from '@/views/Admin/Overview.vue'
@@ -12,7 +12,10 @@ import Category from '@/views/Admin/Category.vue'
 import ErrorLog from '@/views/Admin/ErrorLog.vue'
 import OptionLog from '@/views/Admin/OptionLog.vue'
 import LoginLog from '@/views/Admin/LoginLog.vue'
-
+import LayoutVue from '@/views/index/user/Layout.vue'
+import ProfileVue from '@/views/index/user/Profile.vue'
+import BorrowVue from '@/views/index/user/Borrow.vue'
+import MessageVue from '@/views/index/user/Message.vue'
 
 const routes = [
     {
@@ -35,6 +38,15 @@ const routes = [
             { path: 'login-log', component: LoginLog }, // 登录日志页面
         ]
     },
+    {
+        path: '/',
+        component: LayoutVue,
+        children: [
+            { path: '/profile', component: ProfileVue },
+            { path: '/borrow', component: BorrowVue },
+            { path: '/message', component: MessageVue }
+        ]
+    }
 ]
 
 const router = createRouter({

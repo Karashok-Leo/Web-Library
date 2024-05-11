@@ -1,5 +1,5 @@
 {
-  "name": "vite-project",
+  "name": "web-library",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -14,7 +14,8 @@
     "pinia": "^2.1.7",
     "pinia-persistedstate-plugin": "^0.1.0",
     "vue": "^3.4.21",
-    "vue-router": "^4.3.2"
+    "vue-router": "^4.3.2",
+    "vueup": "^1.3.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",

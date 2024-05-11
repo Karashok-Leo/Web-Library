@@ -2,7 +2,7 @@
   <el-container id="components-layout-demo-custom-trigger">
     <el-header style="background: #fff; padding: 0">
       <div class="header">
-        <el-icon size="40px"><Platform /></el-icon>
+        <el-icon size="40px"><Platform/></el-icon>
         <span class="header-title">智能图书借阅管理系统</span>
         <div class="empty"></div>
         <span>管理员[{{ userStore.admin_user_name }}]</span>
@@ -15,7 +15,7 @@
                     </span>
           <template #dropdown>
             <el-dropdown-menu >
-              <el-dropdown-item command="password" :icon="EditPen">修改个人信息</el-dropdown-item>
+              <el-dropdown-item command="password" :icon="EditPen">修改密码</el-dropdown-item>
               <el-dropdown-item command="logout" :icon="SwitchButton">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -85,47 +85,121 @@
       </el-main>
     </el-container>
   </el-container>
+
+  <!-- 添加修改密码弹窗 -->
+  <el-dialog v-model="dialog" title="密码修改" width="30%">
+    <el-form
+        :model="passwordModel"
+        :rules="rules"
+        label-width="100px"
+        style="padding-right: 30px"
+    >
+      <el-form-item label="旧密码" prop="oldpassword">
+        <el-input
+            v-model="passwordModel.old_pwd"
+            minlength="3"
+            maxlength="16"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="新密码" prop="newpassword">
+        <el-input
+            v-model="passwordModel.new_pwd"
+            minlength="3"
+            maxlength="16"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="重复新密码" prop="repassword">
+        <el-input
+            v-model="passwordModel.re_pwd"
+            minlength="3"
+            maxlength="16"
+        ></el-input>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialog = false">取消</el-button>
+          <el-button type="primary" @click="editPassword"> 确认 </el-button>
+        </span>
+    </template>
+  </el-dialog>
 </template>
 <script setup>
 import { ref } from 'vue';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import router from '@/router/index.js';
+import { useTokenStore } from '@/stores/token.js';
 import {
   CaretBottom,
   Comment,
   EditPen,
-  Histogram,
-  List,
-  Notebook,
+  Histogram, List, Notebook,
   Platform,
   Promotion,
   SwitchButton,
-  UserFilled,
-  View,
+  UserFilled, View
 } from "@element-plus/icons-vue";
 
-const userStore=ref({
+// 使用自定义 hook 创建 token 存储实例
+const tokenStore = useTokenStore();
+
+// 响应式变量，控制对话框的显示与隐藏
+const dialog = ref(false);
+
+// 响应式对象，包含管理员用户名
+const userStore = ref({
   admin_user_name: 'Admin', // 替换为你的管理员用户名
 });
 
-const handleLogout = () => {
-  // 实现退出登录功能的方法
+// 响应式对象，存储修改密码表单数据
+const passwordModel = ref({
+  old_pwd: null,
+  new_pwd: null,
+  re_pwd: null,
+});
+
+// 处理下拉菜单的点击事件
+const handleCommand = (command) => {
+  if (command === 'logout') {
+    // 退出登录
+    ElMessageBox.confirm(
+        '确认要退出登录?',
+        'Warning',
+        {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+    )
+        .then(async () => {
+          tokenStore.removeToken();
+          await Logout(); // 调用退出登录的函数
+          await router.push('/Login');
+          ElMessage({
+            type: 'success',
+            message: '已退出登录',
+          });
+        })
+        .catch(() => {
+          ElMessage({
+            type: 'info',
+            message: '已取消登录',
+          });
+        });
+  } else {
+    // 显示修改密码对话框
+    dialog.value = true;
+  }
 };
 
-const handleClick = (index) => {
-  // 导航到相应的路由路径
-  switch (index) {
-    case '/category':
-      this.$router.push({ path: '/category' });
-      break;
-    case '/order':
-      this.$router.push({ path: '/order' });
-      break;
-    case '/user':
-      this.$router.push({ path: '/user' });
-      break;
-      // 添加其他菜单项的处理逻辑
-    default:
-      break;
-  }
+// 修改个人信息
+const editPassword = async () => {
+  // 调用修改密码的服务函数
+  let result = await editPasswordService(passwordModel.value);
+  dialog.value = false;
+  ElMessage.success('密码修改成功，请重新登录');
+  tokenStore.removeToken();
+  await router.push('/Login');
 };
 </script>
 <style scoped>

@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 //导入组件
+import HomeVue from '@/views/index/Home.vue'
+import DetailVue from '@/views/index/Detail.vue'
 import LoginVue from '@/views/index/user/Login.vue'
 import Main from '@/views/Admin/Main.vue'
 import Comment from '@/views/Admin/Comment.vue'
@@ -18,6 +20,18 @@ import BorrowVue from '@/views/index/user/Borrow.vue'
 import MessageVue from '@/views/index/user/Message.vue'
 
 const routes = [
+    {
+        path: '/',
+        redirect: '/home'
+    },
+    {
+        path: '/home',
+        component: HomeVue
+    },
+    {
+        path: '/detail',
+        component: DetailVue
+    },
     {
         path: '/login',
         component: LoginVue
@@ -41,6 +55,7 @@ const routes = [
     {
         path: '/user',
         component: LayoutVue,
+        redirect: '/user/profile',
         children: [
             { path: '/user/profile', component: ProfileVue },
             { path: '/user/borrow', component: BorrowVue },

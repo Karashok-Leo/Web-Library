@@ -1,23 +1,10 @@
 <template>
 
     <el-card class="page-container">
-        <template #header>
-            <span>借阅记录</span>
-        </template>
+        <template #header>借阅记录</template>
 
-        <!-- 搜索表单 -->
-        <el-form inline>
-            <el-form-item>
-                <el-input v-model="input" style="width: 240px" placeholder="请输入书名" clearabl :prefix-icon="Search" />
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" @click="inputSearch">搜索</el-button>
-                <el-button @click="deleteSelectedComments">批量删除</el-button>
-            </el-form-item>
-        </el-form>
-
-        <!-- 图书列表 -->
-        <el-table style="width: 100%" @selection-change="handleSelectionChange" :cell-style="{ textAlign: 'center' }"
+        <el-table style="width: 100%" :data="borrowList.slice((pageNum - 1) * pageSize, pageNum * pageSize)"
+            @selection-change="handleSelectionChange" :cell-style="{ textAlign: 'center' }"
             :header-cell-style="{ 'text-align': 'center' }">
             <el-table-column label="图书编号" prop="book_id"> </el-table-column>
             <el-table-column label="图书名称" prop="book_name"></el-table-column>
@@ -36,11 +23,9 @@
             </template>
         </el-table>
 
-        <!-- 分页条 -->
-        <el-pagination v-model:current-page="pageNum" v-model:page-size="pageSize" :page-sizes="[3, 5, 10, 15]"
-            layout="jumper, total, sizes, prev, pager, next" background :total="total" @size-change="onSizeChange"
-            @current-change="onCurrentChange" style="margin-top: 20px;
-        justify-content: flex-end" />
+        <el-pagination :current-page="pageCurrent" :total="pageTotal" :page-size="pageSize"
+            :page-sizes="[5, 10, 15, 20]" background layout="total, sizes, prev, pager, next, jumper"
+            @size-change="onSizeChange" @current-change="onCurrentChange" />
 
         <!-- 编辑图书弹窗 -->
         <el-dialog v-model="dialogVisible" title="归还图书" width="40%">
@@ -68,16 +53,39 @@
 
 <script setup>
 
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 // 借阅记录数据
 const borrowList = ref([])
 //显示还书弹窗
 const dialogVisible = ref(false);
 //分页模型
-const pageNum = ref(1)//当前页
-const total = ref(20)//总条数
-const pageSize = ref(3)//每页条数
+const pageCurrent = ref(1)//当前页
+const pageTotal = ref(1)//总页数
+const pageSize = ref(10)//每页条数
+
+onMounted(() => {
+    //获取借阅记录
+    refreshBorrowList()
+})
+
+const refreshBorrowList = () => {
+    //刷新借阅记录
+    getBooks()
+}
+
+//当每页条数发生了变化，调用此函数
+const onSizeChange = (size) => {
+    pageSize.value = size
+    //刷新列表
+    refreshBorrowList();
+}
+//当前页码发生变化，调用此函数
+const onCurrentChange = (num) => {
+    pageCurrent.value = num
+    //刷新列表
+    refreshBorrowList();
+}
 
 </script>
 

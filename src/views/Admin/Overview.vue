@@ -1,5 +1,4 @@
 <template>
-<<<<<<< HEAD
     <div class="layout">
       <!-- 顶层四个卡片区域 -->
       <div class="top-cards">
@@ -145,13 +144,3 @@
   .chart-card { width: 100%; }
   .chart-container { height: 300px; }
   </style>
-=======
-
-</template>
-
-<script setup>
-
-</script>
-
-<style scoped></style>
->>>>>>> 67416653a4d8bea04c2cd0d9efa432fb744679b1

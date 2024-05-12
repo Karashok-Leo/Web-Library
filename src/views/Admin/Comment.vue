@@ -3,27 +3,34 @@ import {
   Delete, Search
 } from '@element-plus/icons-vue'
 import { ref } from 'vue'
-import {ElMessage} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
+import {deleteCommentByGroupService, deleteCommentService, getCommentsService} from "@/api/comment.js";
 
 //评论列表数据模型
 const Comments = ref([
   {
-    "user":"bookadmin",
-    "bookName": "管理图书22",
-    "comment": "6",
-    "commentTime": "2024-05-08 11:29:02",
+    "comment_id": 2,
+    "content": "test comment",
+    "user_id": 1,
+    "book_id": 1,
+    "created_at": "2024-05-11 14:40:28",
+    "updated_at": "2024-05-11 14:40:28"
   },
   {
-    "user":"bookadmin",
-    "bookName": "管理图书22",
-    "comment": "6",
-    "commentTime": "2024-05-08 11:29:02",
+    "comment_id": 3,
+    "content": "nice book",
+    "user_id": 2,
+    "book_id": 3,
+    "created_at": "2024-05-11 14:49:51",
+    "updated_at": "2024-05-11 14:49:51"
   },
   {
-    "user":"bookadmin",
-    "bookName": "管理图书22",
-    "comment": "6",
-    "commentTime": "2024-05-08 11:29:02",
+    "comment_id": 4,
+    "content": "nice book",
+    "user_id": 2,
+    "book_id": 3,
+    "created_at": "2024-05-11 14:49:51",
+    "updated_at": "2024-05-11 14:49:51"
   },
 ])
 
@@ -46,7 +53,7 @@ const getComments =async () => {
     //更新总条数，用于分页显示
     total.value = result.data.length;
   } catch (error) {
-    console.error("获取评论数据失败：", error);
+    ElMessage({type: "error", message: "获取列表失败",});
   }
 }
 getComments()
@@ -73,14 +80,14 @@ const inputSearch = async () => {
   try {
     // 根据书名进行模糊搜索
     total.value = result.data.filter(comment =>
-        comment.bookName.includes(keyword)
+        comment.book_name.includes(keyword)
     ).length;
     Comments.value = result.data.filter( comment=>
-        comment.bookName.includes(keyword)
+        comment.book_name.includes(keyword)
     );
   } catch (error) {
     console.error('搜索评论时出错：', error);
-    ElMessage.error(result.statusText || '搜索评论时出错：');
+    ElMessage({type: "error", message: "搜索评论出错",});
   }
   input.value = ''; // 清空输入框
 };
@@ -92,20 +99,44 @@ const handleSelectionChange = (selected) => {
 };
 // 删除选中项
 const deleteSelectedComments = () => {
-  // 调用后端删除数据的函数
-  deleteCommentService(selectedItems.value);
-  // 清空选中项
-  selectedItems.value = [];
-  //刷新列表
-  getComments();
+  if (!Array.isArray(selectedItems.value) || selectedItems.value.length === 0) {
+    ElMessage({type: "info", message: "请先选择要删除的项",});
+    return;
+  }
+  ElMessageBox.confirm("确认删除选中的项吗?", "温馨提示", {
+    confirmButtonText: "确认",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+      .then(async () => {
+        // 调用后端删除数据的函数
+        await  deleteCommentByGroupService(selectedItems.value);
+        // 清空选中项
+        selectedItems.value = [];
+        //刷新列表
+        await getComments();
+        ElMessage({type: "success", message: "删除成功",});
+      })
+      .catch(() => {
+        ElMessage({type: "info", message: "删除已取消",});
+      });
 };
 
 //删除单个评论
 const deleteComment = (row) => {
-  // 调用后端删除数据的函数
-  deleteCommentService(row);
-  //刷新列表
-  getComments();
+  ElMessageBox.confirm("确认删除该评论吗?", "温馨提示", {
+    confirmButtonText: "确认",
+    cancelButtonText: "我再想想",
+    type: "warning",
+  }).then(async ()=>{
+    //调用接口
+    let result = await deleteCommentService(row.comment_id);
+    ElMessage({type: "success", message: "删除成功",});
+    //刷新列表
+    await getComments();
+  }).catch(()=>{
+    ElMessage({type: "info", message: "删除已取消",});
+  })
 };
 
 </script>
@@ -141,10 +172,10 @@ const deleteComment = (row) => {
     >
       <el-table-column type="selection" width="55" />
       <el-table-column label="序号" type="index" prop="index" width="60"/>
-      <el-table-column label="用户" width="150" prop="user"></el-table-column>
-      <el-table-column label="书名" width="200" prop="bookName"></el-table-column>
-      <el-table-column label="评论内容" prop="comment"></el-table-column>
-      <el-table-column label="评论时间" prop="commentTime" width="200"></el-table-column>
+      <el-table-column label="用户" width="150" prop="user_name"></el-table-column>
+      <el-table-column label="书名" width="200" prop="book_name"></el-table-column>
+      <el-table-column label="评论内容" prop="content"></el-table-column>
+      <el-table-column label="评论时间" prop="created_at" width="200"></el-table-column>
       <el-table-column label="操作" width="100">
         <template #default="{ row }">
           <el-button :icon="Delete" circle plain type="danger" @click="deleteComment(row)"></el-button>

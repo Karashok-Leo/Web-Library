@@ -7,7 +7,7 @@ export const userLoginService = (data) => request.post('/userLogin', data);
 export const userRegisterService = (data) => request.post('/userRegister', data);
 
 //编辑用户资料
-export const editProfileService=(userId,data)=> request.put('/userInfo/'+userId, data);
+export const editProfileService = (userId, data) => request.put('/userInfo/' + userId, data);
 
 //用户退出接口
 export const userLogoutService = () => request.post('/logout');

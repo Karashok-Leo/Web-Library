@@ -7,10 +7,11 @@
             </el-menu-item>
             <div class="gap" />
             <el-button class="login" type="primary" v-if="!tokenStore.token" @click="jumpToLogin()">登录</el-button>
-            <el-button class="login" type="success" v-if="tokenStore.token&&userStore.userInfo.admin_id" @click="jumpToAdmin()">管理</el-button>
-            <el-sub-menu class="my" index="my" v-if="tokenStore.token&&userStore.userInfo.user_id">
+            <el-button class="login" type="success" v-if="tokenStore.token && userStore.userInfo?.admin_id"
+                @click="jumpToAdmin()">管理</el-button>
+            <el-sub-menu class="my" index="my" v-if="tokenStore.token && userStore.userInfo?.user_id">
                 <template #title>
-                    <el-avatar class="avatar" block :src="userStore.userInfo ? userStore.userInfo.image_url : ''" />
+                    <el-avatar class="avatar" block :src="userStore.userInfo?.image_url" />
                     我的
                 </template>
                 <el-menu-item index="/user/profile">个人资料</el-menu-item>

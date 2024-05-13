@@ -1,76 +1,79 @@
 <template>
-  <div id="background">
-    <div class="login-box">
-        <div class="content" :style="elementStyle">
-            <h2>{{ (isAdmin ? '管理员' : '用户') + (isRegister ? '注册' : '登录') }}</h2>
+    <div id="background">
+        <img class="logo" src="/icon.svg" alt="Web Library logo" />
+        <div class="login-box">
+            <div class="content" :style="elementStyle">
+                <h2>{{ (isAdmin ? '管理员' : '用户') + (isRegister ? '注册' : '登录') }}</h2>
 
-            <el-form ref="loginForm" size="large" autocomplete="off" :rules="loginRules" :model="loginData"
-                v-if="!isRegister">
-                <el-form-item prop="username">
-                    <el-input class="form-item" :prefix-icon="User" placeholder="请输入用户名" v-model="loginData.username" />
-                </el-form-item>
-                <el-form-item prop="password">
-                    <el-input class="form-item" :prefix-icon="Lock" type="password" placeholder="请输入密码"
-                        v-model="loginData.password" />
-                </el-form-item>
-                <el-form-item>
-                    <el-button id="submit" class="form-item" type="primary" plain auto-insert-space
-                        @click="submit(loginForm)">
-                        登录
-                    </el-button>
-                </el-form-item>
-            </el-form>
-
-            <el-form ref="registerForm" size="large" autocomplete="off" :rules="registerRules" :model="registerData"
-                v-if="isRegister">
-                <el-form-item prop="username">
-                    <el-input class="form-item" :prefix-icon="User" placeholder="请输入用户名"
-                        v-model="registerData.username" />
-                </el-form-item>
-                <el-form-item prop="password">
-                    <el-input class="form-item" :prefix-icon="Lock" type="password" placeholder="请输入密码"
-                        v-model="registerData.password" />
-                </el-form-item>
-                <el-form-item prop="repassword">
-                    <el-input class="form-item" :prefix-icon="Lock" type="password" placeholder="请再次输入密码"
-                        v-model="registerData.repassword" />
-                </el-form-item>
-                <el-form-item prop="email">
-                    <el-input class="form-item" :prefix-icon="Message" type="email" placeholder="请输入邮箱"
-                        v-model="registerData.email" />
-                </el-form-item>
-                <div class="form-item" style="display: flex;">
-                    <el-form-item>
-                        <el-input :prefix-icon="Key" type="text" placeholder="请输入验证码" v-model="registerData.captcha" />
+                <el-form ref="loginForm" size="large" autocomplete="off" :rules="loginRules" :model="loginData"
+                    v-if="!isRegister">
+                    <el-form-item prop="username">
+                        <el-input class="form-item" :prefix-icon="User" placeholder="请输入用户名"
+                            v-model="loginData.username" />
                     </el-form-item>
-                    <el-button id="sendCode" class="form-item" type="primary" plain auto-insert-space
-                        :disabled="verifyCounting > 0" @click="sendVerifyCode">
-                        {{ verifyCounting > 0 ? verifyCounting + '秒后重新获取' : '发送验证码' }}
-                    </el-button>
-                </div>
-                <el-form-item>
-                    <el-button id="submit" class="form-item" type="primary" plain auto-insert-space
-                        @click="submit(registerForm)">
-                        注册
-                    </el-button>
-                </el-form-item>
-            </el-form>
+                    <el-form-item prop="password">
+                        <el-input class="form-item" :prefix-icon="Lock" type="password" placeholder="请输入密码"
+                            v-model="loginData.password" />
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button id="submit" class="form-item" type="primary" plain auto-insert-space
+                            @click="submit(loginForm)">
+                            登录
+                        </el-button>
+                    </el-form-item>
+                </el-form>
+
+                <el-form ref="registerForm" size="large" autocomplete="off" :rules="registerRules" :model="registerData"
+                    v-if="isRegister">
+                    <el-form-item prop="username">
+                        <el-input class="form-item" :prefix-icon="User" placeholder="请输入用户名"
+                            v-model="registerData.username" />
+                    </el-form-item>
+                    <el-form-item prop="password">
+                        <el-input class="form-item" :prefix-icon="Lock" type="password" placeholder="请输入密码"
+                            v-model="registerData.password" />
+                    </el-form-item>
+                    <el-form-item prop="repassword">
+                        <el-input class="form-item" :prefix-icon="Lock" type="password" placeholder="请再次输入密码"
+                            v-model="registerData.repassword" />
+                    </el-form-item>
+                    <el-form-item prop="email">
+                        <el-input class="form-item" :prefix-icon="Message" type="email" placeholder="请输入邮箱"
+                            v-model="registerData.email" />
+                    </el-form-item>
+                    <div class="form-item" style="display: flex;">
+                        <el-form-item>
+                            <el-input :prefix-icon="Key" type="text" placeholder="请输入验证码"
+                                v-model="registerData.captcha" />
+                        </el-form-item>
+                        <el-button id="sendCode" class="form-item" type="primary" plain auto-insert-space
+                            :disabled="verifyCounting > 0" @click="sendVerifyCode">
+                            {{ verifyCounting > 0 ? verifyCounting + '秒后重新获取' : '发送验证码' }}
+                        </el-button>
+                    </div>
+                    <el-form-item>
+                        <el-button id="submit" class="form-item" type="primary" plain auto-insert-space
+                            @click="submit(registerForm)">
+                            注册
+                        </el-button>
+                    </el-form-item>
+                </el-form>
+            </div>
         </div>
+
+        <el-link class="admin" type="info" :underline="false"
+            @click="isAdmin = !isAdmin; isRegister = false; clearFormData(); updateBackground()">
+            {{ '我是' + (isAdmin ? '用户' : '管理员') }}
+        </el-link>
+
+        <el-link class="forget" type="primary" :underline="false" v-if="!isAdmin" :disabled="isRegister">
+            忘记密码？
+        </el-link>
+        <el-link class="register" type="info" :underline="false" v-if="!isAdmin"
+            @click="isRegister = !isRegister; clearFormData()">
+            {{ isRegister ? '登录' : '注册' }}
+        </el-link>
     </div>
-
-    <el-link class="admin" type="info" :underline="false"
-        @click="isAdmin = !isAdmin; isRegister = false; clearFormData(); updateBackground()">
-        {{ '我是' + (isAdmin ? '用户' : '管理员') }}
-    </el-link>
-
-    <el-link class="forget" type="primary" :underline="false" v-if="!isAdmin" :disabled="isRegister">
-        忘记密码？
-    </el-link>
-    <el-link class="register" type="info" :underline="false" v-if="!isAdmin"
-        @click="isRegister = !isRegister; clearFormData()">
-        {{ isRegister ? '登录' : '注册' }}
-    </el-link>
-  </div>
 </template>
 
 <script setup>
@@ -90,11 +93,11 @@ const userStore = useUserStore();
 const tokenStore = useTokenStore();
 const router = useRouter();
 const elementStyle = ref({
-  backgroundColor: '#eff0f4',
+    backgroundColor: '#eff0f4',
 });
 
 const updateBackground = () => {
-  elementStyle.value.backgroundColor = isAdmin.value ? '#f5d9ea' : '#eff0f4';
+    elementStyle.value.backgroundColor = isAdmin.value ? '#f5d9ea' : '#eff0f4';
 };
 
 const loginForm = ref(null);
@@ -257,7 +260,7 @@ const sendVerifyCode = async () => {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    user-select:none;
+    user-select: none;
 }
 
 body {
@@ -267,17 +270,18 @@ body {
 }
 
 #background {
-  background-image: url("/background.jpg");
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  background-size: 100% 100%;
+    background-image: url("/background.jpg");
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    background-size: 100% 100%;
 
 }
 
 .login-box {
     position: absolute;
-    top: 100px; left: 530px;
+    top: 100px;
+    left: 530px;
     display: flex;
     justify-content: center;
     opacity: 0.9;

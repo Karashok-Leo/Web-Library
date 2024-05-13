@@ -9,11 +9,11 @@
 
             <el-descriptions-item label="用户名">
                 <el-input v-model="profile.username" style="width: 240px" placeholder="请输入用户名"
-                    @change="profileChange" />
+                    @change="editProfile" />
             </el-descriptions-item>
 
             <el-descriptions-item label="性别">
-                <el-radio-group v-model="profile.sex" size="large" @change="profileChange">
+                <el-radio-group v-model="profile.sex" size="large" @change="editProfile">
                     <el-radio-button label="男" value="0" />
                     <el-radio-button label="女" value="1" />
                     <el-radio-button label="你不需要知道这么多..." value="2" />
@@ -21,7 +21,7 @@
             </el-descriptions-item>
 
             <el-descriptions-item label="年龄">
-                <el-input-number v-model="profile.age" :min="0" :max="9000" @change="profileChange" />
+                <el-input-number v-model="profile.age" :min="0" :max="9000" @change="editProfile" />
             </el-descriptions-item>
 
             <el-descriptions-item label="邮箱">{{ profile.email }}</el-descriptions-item>
@@ -38,7 +38,7 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="editAvatarDialog = false">取消</el-button>
-        <el-button type="primary" @click="editAvatarDialog = false; profile.image_url = editAvatarUrl; profileChange()">
+        <el-button type="primary" @click="editAvatarDialog = false; profile.image_url = editAvatarUrl; editProfile()">
           确定
         </el-button>
       </div>
@@ -60,7 +60,7 @@ const profile = ref(userStore.userInfo);
 const editAvatarDialog = ref(false);
 const editAvatarUrl = ref('');
 
-const profileChange = async () => {
+const editProfile = async () => {
     let result = await editProfileService(profile.value.user_id, {
         username: profile.value.username,
         sex: profile.value.sex,

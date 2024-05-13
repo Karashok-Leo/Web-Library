@@ -26,19 +26,19 @@ import AdminManage from '@/views/Admin/AdminManage.vue'
 const routes = [
     {
         path: '/',
-        redirect: '/home'
+        redirect: '/home' // 默认重定向到首页
     },
     {
         path: '/home',
-        component: HomeVue
+        component: HomeVue // 首页
     },
     {
         path: '/detail/:id',
-        component: DetailVue
+        component: DetailVue // 书籍详情页
     },
     {
         path: '/login',
-        component: LoginVue
+        component: LoginVue // 登录页面
     },
     {
         path: '/logout',
@@ -66,10 +66,10 @@ const routes = [
         component: LayoutVue,
         redirect: '/user/profile',
         children: [
-            { path: '/user/profile', component: ProfileVue },
-            { path: '/user/borrow', component: BorrowVue },
-            { path: '/user/collect', component: CollectVue },
-            { path: '/user/comment', component: CommentVue }
+            { path: '/user/profile', component: ProfileVue }, // 个人资料页面
+            { path: '/user/borrow', component: BorrowVue }, // 借阅列表页面
+            { path: '/user/collect', component: CollectVue }, // 收藏列表页面
+            { path: '/user/comment', component: CommentVue } // 评论列表页面
         ]
     }
 ]

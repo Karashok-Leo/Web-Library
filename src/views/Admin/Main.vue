@@ -1,6 +1,7 @@
 <template>
+  <Header/>
   <el-container id="components-layout-demo-custom-trigger">
-    <el-header style="background: #ffffff; padding: 0">
+    <!-- <el-header style="background: #ffffff; padding: 0">
       <div class="header">
         <el-icon size="40px">
           <Platform />
@@ -23,7 +24,7 @@
           </template>
         </el-dropdown>
       </div>
-    </el-header>
+    </el-header> -->
     <el-container>
       <!-- 左侧菜单 -->
       <el-aside width="200px">
@@ -71,6 +72,8 @@
             </el-icon>
             <span>管理员管理</span>
           </el-menu-item>
+
+          <el-button type="plain" style="width: 100%;height: 40px;background-color:#545c64; color: white;" @click="dialog = true;">修改密码</el-button>
 <!--          <el-sub-menu>-->
 <!--            <template #title>-->
 <!--              <el-icon>-->

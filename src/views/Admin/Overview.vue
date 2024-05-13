@@ -146,7 +146,7 @@ import {ref, onMounted, onUnmounted} from 'vue';
   </script>
   
   <style scoped>
-  .layout { display: flex; flex-direction: column; height: 100%; }
+  .layout { display: flex; flex-direction: column; }
   .top-cards { display: flex; justify-content: space-between; margin-bottom: 20px; }
   .card { width: calc(25% - 10px); }
   .card-header { display: flex; justify-content: space-between; align-items: center; }

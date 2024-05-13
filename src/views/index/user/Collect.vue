@@ -4,7 +4,7 @@
         <template #header>评论记录</template>
 
         <el-table style="width: 100%"
-            :data="collectList.map(collect => collect.bookInfo).slice((pageCurrent - 1) * pageSize, pageCurrent * pageSize)"
+            :data="collectList.slice((pageCurrent - 1) * pageSize, pageCurrent * pageSize)"
             :cell-style="{ textAlign: 'center' }" :header-cell-style="{ 'text-align': 'center' }">
             <el-table-column label="图书编号" prop="book_id"> </el-table-column>
             <el-table-column label="图书名称" prop="book_name"></el-table-column>
@@ -44,7 +44,7 @@ const collectList = ref([])
 
 //分页模型
 const pageCurrent = ref(1)//当前页
-const pageTotal = ref(1)//总页数
+const pageTotal = ref(1)//总条数
 const pageSize = ref(10)//每页条数
 
 onMounted(() => {
@@ -57,22 +57,29 @@ const refreshCollectList = async () => {
     let result = await getCollect();
     if (result.data.success)
         collectList.value = result.data.data;
+    // 获取图书信息
     collectList.value.forEach(async (collect) => {
         let bookInfo = await getBookInfo(collect.book_id);
         if (bookInfo.data.success) {
-            collect.bookInfo = bookInfo.data.data;
-            let categoryInfo = await getCategoryInfo(collect.bookInfo.category_id);
+            collect.book_id = bookInfo.data.data.book_id;
+            collect.book_name = bookInfo.data.data.book_name;
+            collect.author = bookInfo.data.data.author;
+
+            let categoryInfo = await getCategoryInfo(bookInfo.data.data.category_id);
             if (categoryInfo.data.success)
-                collect.bookInfo.category_name = categoryInfo.data.data.category_name;
+                collect.category_name = categoryInfo.data.data.category_name;
         }
     });
+    console.log(collectList.value);
+    // 计算总条数
+    pageTotal.value = collectList.value.length;
 }
 
 // 跳转详情页
 const jumpDetail = (collect) => router.push('/detail/' + collect.book_id);
 
 const unCollect = async (collect) => {
-    let result = await deleteCollect(collect.collect_id);
+    let result = await deleteCollect(collect.collection_id);
     if (result.data.success) {
         refreshCollectList();
         ElMessage.success('取消收藏成功');

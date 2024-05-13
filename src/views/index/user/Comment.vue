@@ -41,7 +41,7 @@ const commentList = ref([])
 
 //分页模型
 const pageCurrent = ref(1)//当前页
-const pageTotal = ref(1)//总页数
+const pageTotal = ref(1)//总条数
 const pageSize = ref(10)//每页条数
 
 onMounted(() => {
@@ -60,6 +60,8 @@ const refreshCommentList = async () => {
         if (bookInfo.data.success)
             comment.book_name = bookInfo.data.data.book_name;
     });
+    // 计算分条数
+    pageTotal.value = commentList.value.length;
 }
 
 // 跳转详情页

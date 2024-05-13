@@ -7,7 +7,8 @@
             </el-menu-item>
             <div class="gap" />
             <el-button class="login" type="primary" v-if="!tokenStore.token" @click="jumpToLogin()">登录</el-button>
-            <el-sub-menu class="my" index="my" v-if="tokenStore.token">
+            <el-button class="login" type="success" v-if="tokenStore.token&&userStore.userInfo.admin_id" @click="jumpToAdmin()">管理</el-button>
+            <el-sub-menu class="my" index="my" v-if="tokenStore.token&&userStore.userInfo.user_id">
                 <template #title>
                     <el-avatar class="avatar" block :src="userStore.userInfo ? userStore.userInfo.image_url : ''" />
                     我的
@@ -31,6 +32,7 @@ import { useUserStore } from '@/stores/user';
 const tokenStore = useTokenStore();
 const userStore = useUserStore();
 const jumpToLogin = () => router.push('/login');
+const jumpToAdmin = () => router.push('/admin');
 
 </script>
 

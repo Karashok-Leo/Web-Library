@@ -14,14 +14,13 @@
 
         <div class="content">
 
-            <el-pagination class="pagination" :current-page="pageCurrent" :total="pageTotal" :page-size="pageSize"
-                :page-sizes="[5, 10, 15, 20]" background layout="total, sizes, prev, pager, next, jumper"
-                @size-change="onSizeChange" @current-change="onCurrentChange" />
-
-
             <el-tabs v-model="category" class="category" @tab-click="switchCategory">
                 <el-tab-pane :label="categoryName" :name="index" v-for="(categoryName, index) in categoryList" />
             </el-tabs>
+
+            <el-pagination class="pagination" :current-page="pageCurrent" :total="pageTotal" :page-size="pageSize"
+                :page-sizes="[5, 10, 15, 20]" background layout="total, sizes, prev, pager, next, jumper"
+                @size-change="onSizeChange" @current-change="onCurrentChange" />
 
             <div class="book-list">
                 <div v-for="item in bookList" :key="item.id" @click="handleDetail(item)" class="book-item">
@@ -81,7 +80,11 @@ onMounted(() => {
 const refreshCategoryList = () => getCategoryInfoList().then(result => categoryList.value = [...categoryList.value, ...result.data.data.map(item => item.category_name)]);
 
 // 获取并刷新图书列表
-const refreshBookList = () => getBooksService().then(result => bookList.value = result.data.data.filter(item => category.value === 0 || item.category_id === category.value));
+const refreshBookList = () => getBooksService().then(result => {
+    bookList.value = result.data.data.filter(item => category.value === 0 || item.category_id === category.value);
+    pageTotal.value = bookList.value.length;
+    bookList.value = bookList.value.slice((pageCurrent.value - 1) * pageSize.value, pageCurrent.value * pageSize.value);
+});
 
 // 刷新推荐列表
 const refreshRecommendList = () => getBooksService().then(result => recommendList.value = result.data.data.sort((a, b) => a.borrow_count - b.borrow_count).slice(0, 4));
@@ -90,10 +93,6 @@ const refreshRecommendList = () => getBooksService().then(result => recommendLis
 const switchCategory = () => {
     //刷新列表
     refreshBookList();
-}
-
-const handleClick = (tab, event) => {
-    console.log(tab, event)
 }
 
 // 跳转到详情页

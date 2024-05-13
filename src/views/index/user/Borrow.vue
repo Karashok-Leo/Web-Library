@@ -61,7 +61,7 @@ const borrowList = ref([])
 const dialogVisible = ref(false);
 //分页模型
 const pageCurrent = ref(1)//当前页
-const pageTotal = ref(1)//总页数
+const pageTotal = ref(1)//总条数
 const pageSize = ref(10)//每页条数
 
 onMounted(() => {

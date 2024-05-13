@@ -15,7 +15,6 @@ export const useUserStore = defineStore(
             let user = await getUserInfoService();
             if (user.data.success) {
                 userInfo.value = user.data.data;
-                console.log(user.data.data);
             } else
                 console.log('setUser失败');
         }

@@ -53,8 +53,8 @@ import { onMounted, ref } from 'vue'
 import router from '@/router'
 import { getBooksService, getCategoryInfoList } from '@/api/book'
 
-import Header from '@/views/index/component/Header.vue'
-import Footer from '@/views/index/component/Footer.vue'
+import Header from '@/views/Common/Header.vue'
+import Footer from '@/views/Common/Footer.vue'
 
 // 图书列表
 const bookList = ref([])

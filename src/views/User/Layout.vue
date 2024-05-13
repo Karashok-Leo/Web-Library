@@ -16,9 +16,9 @@
 
 <script setup>
 
-import Header from '@/views/index/component/Header.vue'
-import Footer from '@/views/index/component/Footer.vue'
-import Menu from '@/views/index/component/Menu.vue'
+import Header from '@/views/Common/Header.vue'
+import Footer from '@/views/Common/Footer.vue'
+import Menu from '@/views/Common/Menu.vue'
 
 </script>
 

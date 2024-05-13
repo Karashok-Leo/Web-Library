@@ -130,8 +130,8 @@
 import { ref, onMounted } from 'vue'
 
 // 组件
-import Header from '@/views/index/component/Header.vue'
-import Footer from '@/views/index/component/Footer.vue'
+import Header from '@/views/Common/Header.vue'
+import Footer from '@/views/Common/Footer.vue'
 
 // API
 import { getBookInfo, getCategoryInfo } from "@/api/book";

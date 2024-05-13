@@ -74,7 +74,7 @@
     try {
       let result = await getTopCardsService();
       //将评论数据存储到Comments中，用于渲染视图
-      topCards.value = result.data;
+      topCards.value = result.data.data;
     } catch (error) {
       ElMessage({type: "error", message: "获取列表失败",});
     }

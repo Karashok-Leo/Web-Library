@@ -1,7 +1,7 @@
 <template>
-
+  <div id="background">
     <div class="login-box">
-        <div class="content">
+        <div class="content" :style="elementStyle">
             <h2>{{ (isAdmin ? '管理员' : '用户') + (isRegister ? '注册' : '登录') }}</h2>
 
             <el-form ref="loginForm" size="large" autocomplete="off" :rules="loginRules" :model="loginData"
@@ -70,7 +70,7 @@
         @click="isRegister = !isRegister; clearFormData()">
         {{ isRegister ? '登录' : '注册' }}
     </el-link>
-
+  </div>
 </template>
 
 <script setup>
@@ -89,9 +89,12 @@ import { useTokenStore } from '@/stores/token.js';
 const userStore = useUserStore();
 const tokenStore = useTokenStore();
 const router = useRouter();
+const elementStyle = ref({
+  backgroundColor: '#eff0f4',
+});
 
 const updateBackground = () => {
-    document.body.style.backgroundColor = isAdmin.value ? '#f5d9ea' : '#eff0f4';
+  elementStyle.value.backgroundColor = isAdmin.value ? '#f5d9ea' : '#eff0f4';
 };
 
 const loginForm = ref(null);
@@ -254,6 +257,7 @@ const sendVerifyCode = async () => {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    user-select:none;
 }
 
 body {
@@ -262,10 +266,21 @@ body {
     background-color: #eff0f4;
 }
 
+#background {
+  background-image: url("/background.jpg");
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background-size: 100% 100%;
+
+}
+
 .login-box {
-    position: relative;
+    position: absolute;
+    top: 100px; left: 530px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    opacity: 0.9;
 
     .content {
         position: relative;

@@ -3,7 +3,7 @@
     <el-header>
         <el-menu class="header" mode="horizontal" height="400px" router :ellipsis="false">
             <el-menu-item index="/">
-                <img class="logo" src="/public/icon.svg" alt="Web Library logo" />
+                <img class="logo" src="/icon.svg" alt="Web Library logo" />
             </el-menu-item>
             <div class="gap" />
             <el-button class="login" type="primary" v-if="!tokenStore.token" @click="jumpToLogin()">登录</el-button>

@@ -52,7 +52,7 @@
 
 import { onMounted, ref } from 'vue'
 import router from '@/router'
-import { getBookInfoList, getCategoryInfoList } from '@/api/book'
+import { getBooksService, getCategoryInfoList } from '@/api/book'
 
 import Header from '@/views/index/component/Header.vue'
 import Footer from '@/views/index/component/Footer.vue'
@@ -81,10 +81,10 @@ onMounted(() => {
 const refreshCategoryList = () => getCategoryInfoList().then(result => categoryList.value = [...categoryList.value, ...result.data.data.map(item => item.category_name)]);
 
 // 获取并刷新图书列表
-const refreshBookList = () => getBookInfoList().then(result => bookList.value = result.data.data.filter(item => category.value === 0 || item.category_id === category.value));
+const refreshBookList = () => getBooksService().then(result => bookList.value = result.data.data.filter(item => category.value === 0 || item.category_id === category.value));
 
 // 刷新推荐列表
-const refreshRecommendList = () => getBookInfoList().then(result => recommendList.value = result.data.data.sort((a, b) => a.borrow_count - b.borrow_count).slice(0, 4));
+const refreshRecommendList = () => getBooksService().then(result => recommendList.value = result.data.data.sort((a, b) => a.borrow_count - b.borrow_count).slice(0, 4));
 
 // 切换分类
 const switchCategory = () => {

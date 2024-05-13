@@ -71,7 +71,6 @@ onMounted(() => {
 
 const refreshBorrowList = () => {
     //刷新借阅记录
-    getBooks()
 }
 
 //当每页条数发生了变化，调用此函数

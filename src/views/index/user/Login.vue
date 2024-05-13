@@ -14,7 +14,8 @@
                         v-model="loginData.password" />
                 </el-form-item>
                 <el-form-item>
-                    <el-button id="submit" class="form-item" type="primary" plain auto-insert-space @click="submit(loginForm)">
+                    <el-button id="submit" class="form-item" type="primary" plain auto-insert-space
+                        @click="submit(loginForm)">
                         登录
                     </el-button>
                 </el-form-item>
@@ -48,7 +49,8 @@
                     </el-button>
                 </div>
                 <el-form-item>
-                    <el-button id="submit" class="form-item" type="primary" plain auto-insert-space @click="submit(registerForm)">
+                    <el-button id="submit" class="form-item" type="primary" plain auto-insert-space
+                        @click="submit(registerForm)">
                         注册
                     </el-button>
                 </el-form-item>
@@ -81,7 +83,10 @@ import { userLoginService, userRegisterService, adminLoginService } from '@/api/
 import { verifyCounting, startCounting, sendVerifyCodeService } from '@/api/verify';
 
 import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user.js';
 import { useTokenStore } from '@/stores/token.js';
+
+const userStore = useUserStore();
 const tokenStore = useTokenStore();
 const router = useRouter();
 
@@ -193,7 +198,8 @@ const userLogin = async () => {
     let result = await userLoginService(loginData.value);
     if (result.data.success) {
         ElMessage.success('登录成功');
-        tokenStore.setToken(result.data.accessToken);
+        tokenStore.setToken(result.data.data.accessToken);
+        userStore.setUser();
         router.push('/');
     } else {
         ElMessage.error('登录失败');
@@ -258,8 +264,6 @@ body {
 .login-box {
     position: relative;
     display: flex;
-    width: 100%;
-    height: 100%;
     justify-content: space-between;
 
     .content {

@@ -3,11 +3,11 @@
     <Header class="header" />
     <el-container class="container">
 
-        <div class="suggestion">
-            <span class="demonstration">Motion blur the switch (default)</span>
+        <div class="recommend">
+            <span class="demonstration">每日推荐</span>
             <el-carousel height="200px" motion-blur>
-                <el-carousel-item v-for="item in 4" :key="item">
-                    <h3 class="small justify-center" text="2xl">{{ item }}</h3>
+                <el-carousel-item v-for="item in recommendList" :key="item.book_id">
+                    <img :src="item.image_url" />
                 </el-carousel-item>
             </el-carousel>
         </div>
@@ -18,9 +18,13 @@
                 :page-sizes="[5, 10, 15, 20]" background layout="total, sizes, prev, pager, next, jumper"
                 @size-change="onSizeChange" @current-change="onCurrentChange" />
 
+
+            <el-tabs v-model="category" class="category" @tab-click="switchCategory">
+                <el-tab-pane :label="categoryName" :name="index" v-for="(categoryName, index) in categoryList" />
+            </el-tabs>
+
             <div class="book-list">
-                <div v-for="item in bookList" :key="item.id" @click="handleDetail(item)"
-                    class="book-item">
+                <div v-for="item in bookList" :key="item.id" @click="handleDetail(item)" class="book-item">
                     <div class="book-cover">
                         <img :src="item.image_url" />
                     </div>
@@ -48,73 +52,53 @@
 
 import { onMounted, ref } from 'vue'
 import router from '@/router'
-import { getBookInfoList, getBookInfo } from '@/api/book'
+import { getBookInfoList, getCategoryInfoList } from '@/api/book'
 
 import Header from '@/views/index/component/Header.vue'
 import Footer from '@/views/index/component/Footer.vue'
 
 // 图书列表
-const bookList = ref([{
-    "book_id": 1,
-    "book_name": "newbook",
-    "author": "author",
-    "text": "this is text",
-    "image_url": "this is a url",
-    "borrow_count": 0,
-    "current_number": 19,
-    "number": 20,
-    "category_id": 22,
-    "product_id": 33,
-    "created_at": "2024-05-11 15:20:14",
-    "updated_at": "2024-05-11 15:22:01"
-},
-{
-    "book_id": 2,
-    "book_name": "book111",
-    "author": "author",
-    "text": "this is text",
-    "image_url": "this is a url",
-    "borrow_count": 0,
-    "current_number": 10,
-    "number": 10,
-    "category_id": 3,
-    "product_id": 46,
-    "created_at": "2024-05-11 15:23:38",
-    "updated_at": "2024-05-11 15:23:38"
-},
-{
-    "book_id": 2,
-    "book_name": "book111",
-    "author": "author",
-    "text": "this is text",
-    "image_url": "this is a url",
-    "borrow_count": 0,
-    "current_number": 10,
-    "number": 10,
-    "category_id": 3,
-    "product_id": 46,
-    "created_at": "2024-05-11 15:23:38",
-    "updated_at": "2024-05-11 15:23:38"
-}])
+const bookList = ref([])
+// 推荐列表
+const recommendList = ref([])
 //分页模型
 const pageCurrent = ref(1)//当前页
 const pageTotal = ref(1)//总页数
 const pageSize = ref(10)//每页条数
+//分类
+const category = ref(0) //当前分类
+const categoryList = ref(['全部']) //分类列表
 
 onMounted(() => {
+    // 获取分类列表
+    refreshCategoryList();
     // 获取图书列表
-    refreshBookList()
+    refreshBookList();
+    // 获取推荐列表
+    refreshRecommendList();
 });
 
-// 获取并刷新评论记录
-const refreshBookList = () => {
-    getBookInfoList().then(result => bookList.value = result.data.data)
+const refreshCategoryList = () => getCategoryInfoList().then(result => categoryList.value = [...categoryList.value, ...result.data.data.map(item => item.category_name)]);
+
+// 获取并刷新图书列表
+const refreshBookList = () => getBookInfoList().then(result => bookList.value = result.data.data.filter(item => category.value === 0 || item.category_id === category.value));
+
+// 刷新推荐列表
+const refreshRecommendList = () => getBookInfoList().then(result => recommendList.value = result.data.data.sort((a, b) => a.borrow_count - b.borrow_count).slice(0, 4));
+
+// 切换分类
+const switchCategory = () => {
+    //刷新列表
+    refreshBookList();
+}
+
+const handleClick = (tab, event) => {
+    console.log(tab, event)
 }
 
 // 跳转到详情页
 const handleDetail = (item) => {
-  let text = router.resolve({name: 'detail', query: {id: item.book_id}})
-  window.open(text.href, '_blank')
+    router.push('/detail/' + item.book_id)
 }
 
 //当每页条数发生了变化，调用此函数
@@ -139,7 +123,7 @@ const onCurrentChange = (num) => {
     align-items: center;
 }
 
-.suggestion {
+.recommend {
     width: 60%;
     margin-top: 50px;
     margin-left: 16%;

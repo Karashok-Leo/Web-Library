@@ -1,9 +1,10 @@
 import request from '@/utils/request'
+import { useUserStore } from '@/stores/user';
 
-export const getCollect = (userId) => request.get('/collect/' + userId);
+export const getCollect = () => request.get('/collect/user/' + useUserStore().userInfo.user_id);
 
-export const addCollect = (data) => request.post('/collect', data);
+export const addCollect = (bookId) => request.post('/collect', { user_id: useUserStore().userInfo.user_id, book_id: bookId });
 
-export const deleteCollect = (id) => request.delete('/collect/' + id);
+export const deleteCollect = (collect_id) => request.delete('/collect/' + collect_id);
 
-export const deleteCollectList = (data) => request.delete('/deleteCollectList', { data });
+export const deleteCollectList = (data) => request.delete('/deleteCollectList', data);

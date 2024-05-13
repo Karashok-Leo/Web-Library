@@ -11,3 +11,6 @@ export const adminLoginService = (data) => request.post('/adminLogin', data);
 
 //密码修改
 export const editPasswordService = (DataObj) => request.patch('/admins/edit', DataObj);
+
+//获取用户信息
+export const getUserInfoService = () => request.get('/currentUser');

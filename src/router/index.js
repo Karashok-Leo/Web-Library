@@ -17,7 +17,8 @@ import LoginLog from '@/views/Admin/LoginLog.vue'
 import LayoutVue from '@/views/index/user/Layout.vue'
 import ProfileVue from '@/views/index/user/Profile.vue'
 import BorrowVue from '@/views/index/user/Borrow.vue'
-import MessageVue from '@/views/index/user/Message.vue'
+import CollectVue from '@/views/index/user/Collect.vue'
+import CommentVue from '@/views/index/user/Comment.vue'
 
 const routes = [
     {
@@ -29,7 +30,7 @@ const routes = [
         component: HomeVue
     },
     {
-        path: '/detail',
+        path: '/detail/:id',
         component: DetailVue
     },
     {
@@ -59,7 +60,8 @@ const routes = [
         children: [
             { path: '/user/profile', component: ProfileVue },
             { path: '/user/borrow', component: BorrowVue },
-            { path: '/user/message', component: MessageVue }
+            { path: '/user/collect', component: CollectVue },
+            { path: '/user/comment', component: CommentVue }
         ]
     }
 ]

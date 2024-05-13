@@ -14,18 +14,8 @@
           </div>
         </el-card>
       </div>
-  
-      <!-- 中间折线图显示一周访问量 -->
-      <div class="middle-chart">
-        <el-card class="chart-card" title="最近一周访问量">
-          <span>最近一周访问量</span>
-          <el-divider />
-          <div class="echarts-box">
-            <div id="lineEcharts" :style="{ width: '1800px', height: '300px' }"></div>
-          </div>
-        </el-card>
-      </div>
-  
+
+
       <!-- 底部两个区域，一个显示热门借阅排名柱状图，一个显示热门分类饼状图 -->
       <div class="bottom-charts">
         <el-card class="chart-card" title="热门借阅排名">
@@ -44,10 +34,20 @@
         </el-card>
       </div>
     </div>
-  </template>
-  
-  <script setup >
-  import {ref, onMounted, onUnmounted} from 'vue';
+  <!-- 中间折线图显示一周访问量 -->
+  <div class="middle-chart">
+    <el-card class="chart-card" title="最近一周访问量">
+      <span>最近一周访问量</span>
+      <el-divider />
+      <div class="echarts-box">
+        <div id="lineEcharts" :style="{ width: '1800px', height: '300px' }"></div>
+      </div>
+    </el-card>
+  </div>
+</template>
+
+<script setup >
+import {ref, onMounted, onUnmounted} from 'vue';
   import {ElCard, ElMessage, ElTag} from 'element-plus';
   import * as echarts from 'echarts';
   import {getTopCardsService} from "@/api/overview.js";

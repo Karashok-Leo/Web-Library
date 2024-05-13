@@ -1,6 +1,6 @@
 <template>
   <el-container id="components-layout-demo-custom-trigger">
-    <el-header style="background: #545c64; padding: 0">
+    <el-header style="background: #ffffff; padding: 0">
       <div class="header">
         <el-icon size="40px">
           <Platform />
@@ -28,7 +28,7 @@
       <!-- 左侧菜单 -->
       <el-aside width="200px">
         <div class="el-aside__logo"></div>
-        <el-menu active-text-color="#ffd04b" background-color="#232323" text-color="#fff" router>
+        <el-menu active-text-color="#ffd04b" background-color="#545c64" text-color="#fff" router>
           <el-menu-item index="/admin/overview">
             <el-icon>
               <View />
@@ -120,6 +120,7 @@
       </span>
     </template>
   </el-dialog>
+  <Footer class="footer"/>
 </template>
 <script setup>
 import { ref } from 'vue';
@@ -138,6 +139,8 @@ import {
   UserFilled, View
 } from "@element-plus/icons-vue";
 import { adminLogoutService, editPasswordService } from "@/api/admin.js";
+import Header from "@/views/Common/Header.vue";
+import Footer from "@/views/Common/Footer.vue";
 
 // 使用自定义 hook 创建 token 存储实例
 const tokenStore = useTokenStore();

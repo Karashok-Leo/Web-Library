@@ -1,13 +1,13 @@
 import request from '@/utils/request.js'
 
 //添加分类
-export const addCategoryService = (data) =>request.post('/categories',categoryData);
+export const addCategoryService = (data) =>request.post('/categoryInfo',categoryData);
 
 //删除分类
-export const delCategoryService = (id)=>request.delete('/categories/'+id);
+export const delCategoryService = (id)=>request.delete('/categoryInfo/'+id);
 
 //分类查询
-export const categoryListService = () =>request.get('/categories');
+export const categoryListService = () =>request.get('/categoryInfo');
 
 //修改
-export const editCategoryService=(DataObj)=>request.put(url);
+export const editCategoryService=(id,data)=>request.put('/categoryInfo/'+id,data);

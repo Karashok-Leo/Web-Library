@@ -48,8 +48,9 @@
   
   <script setup >
   import {ref, onMounted, onUnmounted} from 'vue';
-  import { ElCard, ElTag } from 'element-plus';
+  import {ElCard, ElMessage, ElTag} from 'element-plus';
   import * as echarts from 'echarts';
+  import {getTopCardsService} from "@/api/overview.js";
   
   let lineChartInstance = null;
   let barChartInstance=null;
@@ -68,9 +69,20 @@
     categories: ['小说', '历史', '科幻', '传记', '教育'],
     seriesData: [30, 20, 15, 10, 25]
   };
-  
+
+  const getTopCards =async () => {
+    try {
+      let result = await getTopCardsService();
+      //将评论数据存储到Comments中，用于渲染视图
+      topCards.value = result.data;
+    } catch (error) {
+      ElMessage({type: "error", message: "获取列表失败",});
+    }
+  }
+
   onMounted(() => {
     initChart();
+    getTopCards();
   });
   
   onUnmounted(() => {

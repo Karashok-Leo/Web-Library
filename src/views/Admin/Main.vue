@@ -5,7 +5,7 @@
         <el-icon size="40px"><Platform/></el-icon>
         <span class="header-title">智能图书借阅管理系统</span>
         <div class="empty"></div>
-        <span>管理员[{{ userStore.username }}]</span>
+        <span>管理员[{{ userStore.userInfo.username }}]</span>
         <el-dropdown placement="bottom-end" @command="handleCommand">
                     <span class="el-dropdown__box">
                         <span>设置</span>
@@ -52,7 +52,7 @@
             </el-icon>
             <span>分类管理</span>
           </el-menu-item>
-          <el-menu-item index="/admin/user" v-if="userStore.is_super_admin">
+          <el-menu-item index="/admin/user" v-if="userStore.userInfo.is_super_admin">
             <el-icon><UserFilled />
             </el-icon>
             <span>管理员管理</span>
@@ -133,6 +133,7 @@ import { ref } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import router from '@/router/index.js';
 import { useTokenStore } from '@/stores/token.js';
+import { useUserStore} from '@/stores/user';
 import {
   CaretBottom,
   Comment,
@@ -152,13 +153,19 @@ const tokenStore = useTokenStore();
 const dialog = ref(false);
 
 // 响应式对象，包含管理员用户名
-const userStore = ref({
-  "admin_id": 1,
-  "username": "test",
-  "is_super_admin": 1
-});
+const userStore = useUserStore();
 
 //获取管理员信息
+// const getCurrentAdmin =async () => {
+//   try {
+//     let result = await getAdminService();
+//     userStore.userInfo.value = result.data;
+//     console.log(userStore.userInfo.value)
+//   } catch (error) {
+//     ElMessage({type: "error", message: "获取当前管理员信息失败",});
+//   }
+// }
+// getCurrentAdmin()
 
 // 响应式对象，存储修改密码表单数据
 const passwordModel = ref({

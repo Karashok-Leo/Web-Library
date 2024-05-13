@@ -43,9 +43,9 @@ const getOptionLogs =async () => {
   try {
     let result = await getOptionLogService();
     //将登录日志数据存储到LoginLog中，用于渲染视图
-    OptionLogs.value = result.data;
+    OptionLogs.value = result.data.data;
     //更新总条数，用于分页显示
-    total.value = result.data.length;
+    total.value = result.data.data.length;
   } catch (error) {
     console.error("获取操作日志数据失败：", error);
   }
@@ -75,12 +75,12 @@ const inputSearch = async () => {
   let result = await getOptionLogs(); // 获取操作日志列表
   try {
     // 根据请求方式、请求URL、操作IP进行模糊搜索
-    total.value = result.data.filter(log =>
+    total.value = result.data.data.filter(log =>
         log.requestWay.includes(keyword) ||
         log.requestURL.includes(keyword) ||
         log.optionIP.includes(keyword)
     ).length;
-    OptionLogs.value = result.data.filter(log =>
+    OptionLogs.value = result.data.data.filter(log =>
         log.requestWay.includes(keyword) ||
         log.requestURL.includes(keyword) ||
         log.optionIP.includes(keyword)

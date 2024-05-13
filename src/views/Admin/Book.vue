@@ -125,10 +125,10 @@ const getBooks =async () => {
   try {
     let result = await getBooksService();
     //将数据存储，用于渲染视图
-    Books.value = result.data;
+    Books.value = result.data.data;
     //更新总条数，用于分页显示
-    total.value = result.data.length;
-    Books.value = result.data;
+    total.value = result.data.data.length;
+    Books.value = result.data.data;
   } catch (error) {
     ElMessage({type: "error", message: "获取列表失败",});
   }
@@ -139,7 +139,7 @@ getBooks()
 const getCategorys = async () => {
   let result = await articleCategorysService();
 
-  categorys.value = result.data;
+  categorys.value = result.data.data;
 }
 getCategorys()
 
@@ -158,8 +158,8 @@ const onCurrentChange = (num) => {
 
 //上传成功的回调函数
 const uploadSuccess = (result) => {
-  bookModel.value.image_url = result.data;
-  console.log(result.data);
+  bookModel.value.image_url = result.data.data;
+  console.log(result.data.data);
 }
 
 //添加图书
@@ -206,10 +206,10 @@ const inputSearch = async () => {
   try {
     let result = await getBooksService();
     // 根据书名进行模糊搜索
-    total.value = result.data.filter(book =>
+    total.value = result.data.data.filter(book =>
         book.book_name.includes(keyword)
     ).length;
-    Books.value = result.data.filter( book =>
+    Books.value = result.data.data.filter( book =>
         book.book_name.includes(keyword)
     );
   } catch (error) {

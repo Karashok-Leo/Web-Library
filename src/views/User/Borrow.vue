@@ -32,8 +32,8 @@
   import { onMounted } from 'vue';
   
   import router from '@/router';
-  
-  import { borrowBooksListService } from '@/api/borrow';
+
+  import {borrowBooksListByUserId, borrowBooksListService} from '@/api/borrow';
   
   // 借阅记录数据
   const borrowList = ref([])
@@ -50,7 +50,7 @@
   
   // 获取并刷新借阅记录
   const refreshBorrowList = async () => {
-    let result = await borrowBooksListService()
+    let result = await borrowBooksListByUserId()
     if (result.data.success)
         borrowList.value = result.data.data;
     // 计算分条数

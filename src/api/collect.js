@@ -7,4 +7,4 @@ export const addCollect = (bookId) => request.post('/collect', { user_id: useUse
 
 export const deleteCollect = (collect_id) => request.delete('/collect/' + collect_id);
 
-export const deleteCollectList = (data) => request.delete('/deleteCollectList', data);
+export const deleteCollectList = (data) => request.delete('/collect', data);

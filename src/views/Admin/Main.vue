@@ -59,39 +59,39 @@
             </el-icon>
             <span>分类管理</span>
           </el-menu-item>
-          <el-menu-item index="/admin/user" v-if="userStore.userInfo?.is_super_admin">
-            <el-icon>
-              <UserFilled />
-            </el-icon>
-            <span>管理员管理</span>
-          </el-menu-item>
-          <el-menu-item index="/admin/adminManage">
+          <el-menu-item index="/admin/user">
             <el-icon>
               <UserFilled />
             </el-icon>
             <span>用户管理</span>
           </el-menu-item>
-          <el-sub-menu>
-            <template #title>
-              <el-icon>
-                <Promotion />
-              </el-icon>
-              <i class="el-icon-folder"></i>
-              <span>日志管理</span>
-            </template>
-            <el-menu-item index="/admin/login-log">
-              <i class="el-icon-s-operation"></i>
-              <span>登录日志</span>
-            </el-menu-item>
-            <el-menu-item index="/admin/option-log">
-              <i class="el-icon-s-operation"></i>
-              <span>操作日志</span>
-            </el-menu-item>
-            <el-menu-item index="/admin/error-log">
-              <i class="el-icon-s-operation"></i>
-              <span>错误日志</span>
-            </el-menu-item>
-          </el-sub-menu>
+          <el-menu-item index="/admin/adminManage" v-if="userStore.userInfo?.is_super_admin">
+            <el-icon>
+              <UserFilled />
+            </el-icon>
+            <span>管理员管理</span>
+          </el-menu-item>
+<!--          <el-sub-menu>-->
+<!--            <template #title>-->
+<!--              <el-icon>-->
+<!--                <Promotion />-->
+<!--              </el-icon>-->
+<!--              <i class="el-icon-folder"></i>-->
+<!--              <span>日志管理</span>-->
+<!--            </template>-->
+<!--            <el-menu-item index="/admin/login-log">-->
+<!--              <i class="el-icon-s-operation"></i>-->
+<!--              <span>登录日志</span>-->
+<!--            </el-menu-item>-->
+<!--            <el-menu-item index="/admin/option-log">-->
+<!--              <i class="el-icon-s-operation"></i>-->
+<!--              <span>操作日志</span>-->
+<!--            </el-menu-item>-->
+<!--            <el-menu-item index="/admin/error-log">-->
+<!--              <i class="el-icon-s-operation"></i>-->
+<!--              <span>错误日志</span>-->
+<!--            </el-menu-item>-->
+<!--          </el-sub-menu>-->
         </el-menu>
       </el-aside>
       <el-main :style="{ margin: '16px 16px', minHeight: '200px' }">

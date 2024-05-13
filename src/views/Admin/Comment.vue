@@ -49,9 +49,9 @@ const getComments =async () => {
   try {
     let result = await getCommentsService();
     //将评论数据存储到Comments中，用于渲染视图
-    Comments.value = result.data;
+    Comments.value = result.data.data;
     //更新总条数，用于分页显示
-    total.value = result.data.length;
+    total.value = result.data.data.length;
   } catch (error) {
     ElMessage({type: "error", message: "获取列表失败",});
   }

@@ -38,9 +38,9 @@ const getErrorLogs =async () => {
   try {
     let result = await getErrorLogsService();
     //将登录日志数据存储到LoginLog中，用于渲染视图
-    ErrorLogs.value = result.data;
+    ErrorLogs.value = result.data.data;
     //更新总条数，用于分页显示
-    total.value = result.data.length;
+    total.value = result.data.data.length;
   } catch (error) {
     console.error("获取操作日志数据失败：", error);
   }

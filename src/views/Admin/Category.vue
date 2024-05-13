@@ -5,7 +5,7 @@ import {
 } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 import { ElMessage} from 'element-plus'
-import {addCategoryService, categoryListService, delCategoryService} from "@/api/category.js";
+import {addCategoryService, categoryListService, delCategoryService, editCategoryService} from "@/api/category.js";
 
 // 控制添加分类弹窗
 const dialogVisible = ref(false)
@@ -47,7 +47,7 @@ const rules = {
 const fetchCategories = async () => {
   try {
     const result = await categoryListService()
-    categories.value = result.data
+    categories.value = result.data.data
   } catch (error) {
     console.error('Failed to fetch categories:', error)
     ElMessage.error('获取分类列表失败')

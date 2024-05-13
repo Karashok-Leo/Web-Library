@@ -183,8 +183,8 @@ const userList=async () => {
   try {
     let result = await userListService();
     //渲染视图
-    total.value = result.data.length;
-    users.value = result.data;
+    total.value = result.data.data.length;
+    users.value = result.data.data;
   } catch (error) {
     ElMessage({type: "error", message: "获取列表失败",});
   }
@@ -244,7 +244,7 @@ const deleteSelectedComments = () => {
 const editUser = async (row) =>{
   //获取编辑用户
   let result = await userService(row.id);
-  userModel.value = result.data;
+  userModel.value = result.data.data;
 }
 const editUserF = async () =>{
   try {

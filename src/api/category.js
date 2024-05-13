@@ -1,7 +1,7 @@
 import request from '@/utils/request.js'
 
 //添加分类
-export const addCategoryService = (data) =>request.post('/categoryInfo',categoryData);
+export const addCategoryService = (data) =>request.post('/categoryInfo',data);
 
 //删除分类
 export const delCategoryService = (id)=>request.delete('/categoryInfo/'+id);

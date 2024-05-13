@@ -13,4 +13,4 @@ export const leaveComment = (content, bookId) => request.post('/comment', { cont
 export const deleteCommentByGroupService = (data) => request.delete('/comment', data);
 
 //删除删除评论
-export const deleteCommentService = (id) => request.delete('//comment/' + id);
+export const deleteCommentService = (id) => request.delete('/comment/' + id);

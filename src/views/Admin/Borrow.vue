@@ -62,17 +62,17 @@ const statusFilters = [
 const fetchBorrowBooks = async () => {
   try {
     const result = await borrowBooksListService()
-    borrowBooks.value = result.data.map(book => {
+    borrowBooks.value = result.data.data.map(book => {
       // 根据状态属性值判断是否已还
       const isReturned = book.book_status === 1;
-
+      console.log(book)
       // 添加 state 属性
       return {
         ...book,
         state: isReturned ? '已还' : '借出'
       };
     });
-    total.value = result.data.length;
+    total.value = result.data.data.length;
   } catch (error) {
     console.error('获取列表失败', error)
     ElMessage({type: "error", message: "获取列表失败",});
@@ -101,10 +101,10 @@ const inputSearch = async () => {
   let result = await borrowBooksListService(); // 获取列表
   try {
     // 根据书名进行模糊搜索
-    total.value = result.data.filter(book =>
+    total.value = result.data.data.filter(book =>
         book.book_name.includes(keyword)
     ).length;
-    borrowBooks.value = result.data.filter( book =>
+    borrowBooks.value = result.data.data.filter( book =>
         book.book_name.includes(keyword)
     );
   } catch (error) {
@@ -189,7 +189,7 @@ const delayTime = async (row) => {
     >
       <el-table-column type="selection" width="55" />
       <el-table-column label="序号" type="index"  prop="index" width="60"/>
-      <el-table-column label="用户" width="400" prop="user_name"></el-table-column>
+      <el-table-column label="用户" width="400" prop="username"></el-table-column>
       <el-table-column label="图书" prop="book_name"></el-table-column>
       <el-table-column
           prop="state"

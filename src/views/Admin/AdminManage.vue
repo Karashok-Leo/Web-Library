@@ -77,9 +77,9 @@ const getAdmins =async () => {
   try {
     let result = await getAdminInfoListService();
     //将数据存储，用于渲染视图
-    Admins.value = result.data;
+    Admins.value = result.data.data;
     //更新总条数，用于分页显示
-    total.value = result.data.length;
+    total.value = result.data.data.length;
   } catch (error) {
     ElMessage({type: "error", message: "获取列表失败",});
   }
@@ -143,10 +143,10 @@ const inputSearch = async () => {
   try {
     let result = await getAdminInfoListService();
     // 根据管理员名进行模糊搜索
-    total.value = result.data.filter(Admin =>
+    total.value = result.data.data.filter(Admin =>
         Admin.username.includes(keyword)
     ).length;
-    Admins.value = result.data.filter( Admin =>
+    Admins.value = result.data.data.filter( Admin =>
         Admin.username.includes(keyword)
     );
   } catch (error) {

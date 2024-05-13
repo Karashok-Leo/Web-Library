@@ -1,7 +1,7 @@
 import request from '@/utils/request.js'
 
 //获取用户列表
-export const userListService=(data)=>request.get('/userListInfo',data);
+export const userListService=()=>request.get('/userInfo');
 
 //获取用户
 export const userService=(id)=>request.get('/userInfo/'+id);

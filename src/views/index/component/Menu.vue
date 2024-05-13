@@ -26,7 +26,7 @@
                 </el-icon>
                 <span>我的评论</span>
             </el-menu-item>
-            <el-menu-item index="/user/logout">
+            <el-menu-item index="/logout">
                 <el-icon>
                     <Setting />
                 </el-icon>

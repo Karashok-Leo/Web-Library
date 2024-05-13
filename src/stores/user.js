@@ -20,8 +20,10 @@ export const useUserStore = defineStore(
                 console.log('setUser失败');
         }
 
+        const removeUser = () => userInfo.value = null;
+
         return {
-            userInfo, setUser
+            userInfo, setUser, removeUser
         }
     },
     {

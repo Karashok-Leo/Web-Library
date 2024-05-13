@@ -4,6 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeVue from '@/views/index/Home.vue'
 import DetailVue from '@/views/index/Detail.vue'
 import LoginVue from '@/views/index/user/Login.vue'
+import { Logout } from '@/views/index/user/Logout.js'
 import Main from '@/views/Admin/Main.vue'
 import Comment from '@/views/Admin/Comment.vue'
 import Overview from '@/views/Admin/Overview.vue'
@@ -37,6 +38,10 @@ const routes = [
     {
         path: '/login',
         component: LoginVue
+    },
+    {
+        path: '/logout',
+        redirect: () => Logout() // 登出后重定向到登录页面
     },
     {
         path: '/admin',

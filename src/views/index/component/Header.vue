@@ -9,14 +9,14 @@
             <el-button class="login" type="primary" v-if="!tokenStore.token" @click="jumpToLogin()">登录</el-button>
             <el-sub-menu class="my" index="my" v-if="tokenStore.token">
                 <template #title>
-                    <el-avatar class="avatar" block :src="userStore.userInfo.image_url" />
+                    <el-avatar class="avatar" block :src="userStore.userInfo ? userStore.userInfo.image_url : ''" />
                     我的
                 </template>
                 <el-menu-item index="/user/profile">个人资料</el-menu-item>
                 <el-menu-item index="/user/borrow">借阅中心</el-menu-item>
                 <el-menu-item index="/user/collect">我的收藏</el-menu-item>
                 <el-menu-item index="/user/comment">我的评论</el-menu-item>
-                <el-menu-item index="/user/logout">退出登录</el-menu-item>
+                <el-menu-item index="/logout">退出登录</el-menu-item>
             </el-sub-menu>
         </el-menu>
     </el-header>

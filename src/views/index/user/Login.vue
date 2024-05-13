@@ -229,7 +229,7 @@ const adminLogin = async () => {
     if (result.data.success) {
         ElMessage.success('登录成功');
         tokenStore.setToken(result.data.accessToken);
-        router.push('/');
+        router.push('/admin');
     } else {
         ElMessage.error('登录失败');
     }

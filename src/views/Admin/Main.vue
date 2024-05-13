@@ -1,6 +1,6 @@
 <template>
   <el-container id="components-layout-demo-custom-trigger">
-    <el-header style="background: #fff; padding: 0">
+    <el-header style="background: #545c64; padding: 0">
       <div class="header">
         <el-icon size="40px"><Platform/></el-icon>
         <span class="header-title">智能图书借阅管理系统</span>

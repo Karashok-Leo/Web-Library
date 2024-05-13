@@ -199,6 +199,7 @@ const refreshCollectId = () => {
       }
     })
   })
+  collectId.value = null;
 }
 
 // 借阅
@@ -214,11 +215,8 @@ const borrow = () => {
 // 收藏
 const collect = () => {
   if (!checkLogin()) return;
-  if (collectId.value)
-    deleteCollect(collectId.value);
-  else
-    addCollect(bookId.value);
-  refreshCollectId();
+  let result = collectId.value ? deleteCollect(collectId.value) : addCollect(bookId.value);
+  result.then(() => refreshCollectId());
 }
 
 // 分享

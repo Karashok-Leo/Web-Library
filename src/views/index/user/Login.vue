@@ -228,7 +228,8 @@ const adminLogin = async () => {
     let result = await adminLoginService(loginData.value);
     if (result.data.success) {
         ElMessage.success('登录成功');
-        tokenStore.setToken(result.data.accessToken);
+        tokenStore.setToken(result.data.data.accessToken);
+        userStore.setUser();
         router.push('/admin');
     } else {
         ElMessage.error('登录失败');

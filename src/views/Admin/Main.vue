@@ -5,7 +5,7 @@
         <el-icon size="40px"><Platform/></el-icon>
         <span class="header-title">智能图书借阅管理系统</span>
         <div class="empty"></div>
-        <span>管理员[{{ userStore.admin_user_name }}]</span>
+        <span>管理员[{{ userStore.username }}]</span>
         <el-dropdown placement="bottom-end" @command="handleCommand">
                     <span class="el-dropdown__box">
                         <span>设置</span>
@@ -52,7 +52,12 @@
             </el-icon>
             <span>分类管理</span>
           </el-menu-item>
-          <el-menu-item index="/admin/user">
+          <el-menu-item index="/admin/user" v-if="userStore.is_super_admin">
+            <el-icon><UserFilled />
+            </el-icon>
+            <span>管理员管理</span>
+          </el-menu-item>
+          <el-menu-item index="/admin/adminManage">
             <el-icon><UserFilled />
             </el-icon>
             <span>用户管理</span>
@@ -90,7 +95,6 @@
   <el-dialog v-model="dialog" title="密码修改" width="30%">
     <el-form
         :model="passwordModel"
-        :rules="rules"
         label-width="100px"
         style="padding-right: 30px"
     >
@@ -139,6 +143,7 @@ import {
   SwitchButton,
   UserFilled, View
 } from "@element-plus/icons-vue";
+import {adminLogoutService, editPasswordService} from "@/api/admin.js";
 
 // 使用自定义 hook 创建 token 存储实例
 const tokenStore = useTokenStore();
@@ -148,8 +153,12 @@ const dialog = ref(false);
 
 // 响应式对象，包含管理员用户名
 const userStore = ref({
-  admin_user_name: 'Admin', // 替换为你的管理员用户名
+  "admin_id": 1,
+  "username": "test",
+  "is_super_admin": 1
 });
+
+//获取管理员信息
 
 // 响应式对象，存储修改密码表单数据
 const passwordModel = ref({
@@ -173,7 +182,7 @@ const handleCommand = (command) => {
     )
         .then(async () => {
           tokenStore.removeToken();
-          await Logout(); // 调用退出登录的函数
+          await adminLogoutService(); // 调用退出登录的函数
           await router.push('/Login');
           ElMessage({
             type: 'success',
@@ -192,14 +201,14 @@ const handleCommand = (command) => {
   }
 };
 
-// 修改个人信息
+// 修改密码
 const editPassword = async () => {
   // 调用修改密码的服务函数
   let result = await editPasswordService(passwordModel.value);
   dialog.value = false;
   ElMessage.success('密码修改成功，请重新登录');
   tokenStore.removeToken();
-  await router.push('/Login');
+  await router.push('/user/Login');
 };
 </script>
 <style scoped>
@@ -228,4 +237,3 @@ const editPassword = async () => {
   flex: 1;
 }
 </style>
-  

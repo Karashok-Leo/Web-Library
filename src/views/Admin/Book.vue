@@ -7,6 +7,13 @@ import { ref } from 'vue'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import { Plus } from '@element-plus/icons-vue'
+import {
+  bookAddService,
+  deleteBookByGroupService,
+  deleteBookService,
+  editBookService,
+  getBooksService
+} from "@/api/book.js";
 
 //显示弹窗
 const dialogVisible=ref(false);
@@ -26,32 +33,41 @@ const Books = ref([
     "author": "刘哈哈",
     "text": "暂无",
     "category_id": 332	,
-    "product_id": 2,
+    "product_id": 46,
     "number": 23,
-    "current_count": 23,
-    "borrow_count":14
+    "current_number": 23,
+    "borrow_count":14,
+    "image_url":"",
+    "created_at": "2024-05-11 15:20:14",
+    "updated_at": "2024-05-11 15:20:14"
   },
   {
-    "book_id": 5,
-    "book_name": "无感之谜",
-    "author": "刘哈哈",
-    "text": "暂无",
-    "category_id": 332	,
-    "product_id": 2,
-    "number": 23,
-    "current_count": 23,
-    "borrow_count":14
+    "book_id": 1,
+    "book_name": "book111",
+    "author": "author",
+    "text": "this is text",
+    "image_url": "this is a url",
+    "borrow_count": 0,
+    "current_number": 10,
+    "number": 10,
+    "category_id": 3,
+    "product_id": 46,
+    "created_at": "2024-05-11 15:20:14",
+    "updated_at": "2024-05-11 15:20:14"
   },
   {
-    "book_id": 5,
-    "book_name": "无感之谜",
-    "author": "刘哈哈",
-    "text": "暂无",
-    "category_id": 332	,
-    "product_id": 2,
-    "number": 23,
-    "current_count": 23,
-    "borrow_count":14
+    "book_id": 1,
+    "book_name": "book111",
+    "author": "author",
+    "text": "this is text",
+    "image_url": "this is a url",
+    "borrow_count": 0,
+    "current_number": 10,
+    "number": 10,
+    "category_id": 3,
+    "product_id": 46,
+    "created_at": "2024-05-11 15:20:14",
+    "updated_at": "2024-05-11 15:20:14"
   },
 ])
 //文章分类数据模型
@@ -85,7 +101,7 @@ const bookModel = ref({
   category_id: '',
   product_id: '',
   number: '',
-  current_count: '',
+  current_number: '',
   borrow_count:'',
   image_url:''
 })
@@ -99,7 +115,7 @@ const getDefaultBookModel = () => ({
   category_id: '',
   product_id: '',
   number: '',
-  current_count: '',
+  current_number: '',
   borrow_count:'',
   image_url:''
 });
@@ -108,12 +124,13 @@ const getDefaultBookModel = () => ({
 const getBooks =async () => {
   try {
     let result = await getBooksService();
-    //将评论数据存储到Comments中，用于渲染视图
+    //将数据存储，用于渲染视图
     Books.value = result.data;
     //更新总条数，用于分页显示
     total.value = result.data.length;
+    Books.value = result.data;
   } catch (error) {
-    console.error("获取图书数据失败：", error);
+    ElMessage({type: "error", message: "获取列表失败",});
   }
 }
 getBooks()
@@ -146,21 +163,28 @@ const uploadSuccess = (result) => {
 }
 
 //添加图书
-import { ElMessage } from 'element-plus'
-const addBook = async (clickState) => {
-  //调用接口
-  let result = await bookAddService(bookModel.value);
-
-  ElMessage.success(result.msg ? result.msg : '添加成功');
-
-  //图书模型置空
-  bookModel.value = getDefaultBookModel();
-
-  //让抽屉消失
-  visibleDrawer.value = false;
-
-  //刷新当前列表
-  await getBooks();
+import {ElMessage, ElMessageBox} from 'element-plus'
+const addBook = async () => {
+  try {
+    //调用接口
+    let result = await bookAddService(bookModel.value);
+    if (result.status === 200) {
+      ElMessage.success(result.statusText || '添加成功');
+    } else {
+      ElMessage.error(result.statusText || '添加失败');
+    }
+    //图书模型置空
+    bookModel.value = getDefaultBookModel();
+    //让抽屉消失
+    visibleDrawer.value = false;
+    //刷新当前列表
+    await getBooks();
+  } catch (error) {
+    console.error('添加图书时出错：', error);
+    ElMessage.error('添加图书时出错，请重试');
+    //让抽屉消失
+    visibleDrawer.value = false;
+  }
 }
 
 //取消添加图书
@@ -180,6 +204,7 @@ const inputSearch = async () => {
   }
   let result = await getBooks(); // 获取图书列表
   try {
+    let result = await getBooksService();
     // 根据书名进行模糊搜索
     total.value = result.data.filter(book =>
         book.book_name.includes(keyword)
@@ -189,7 +214,7 @@ const inputSearch = async () => {
     );
   } catch (error) {
     console.error('搜索图书时出错：', error);
-    ElMessage.error(result.statusText || '搜索图书时出错：');
+    ElMessage({type: "error", message: "搜索图书出错",});
   }
   input.value = ''; // 清空输入框
 };
@@ -201,20 +226,43 @@ const handleSelectionChange = (selected) => {
 };
 // 删除选中项
 const deleteSelectedComments = () => {
-  // 调用后端删除数据的函数
-  deleteBookService(selectedItems.value);
-  // 清空选中项
-  selectedItems.value = [];
-  //刷新列表
-  getBooks();
+  if (!Array.isArray(selectedItems.value) || selectedItems.value.length === 0) {
+    ElMessage({type: "info", message: "请先选择要删除的项",});
+    return;
+  }
+  ElMessageBox.confirm("确认删除选中的项吗?", "温馨提示", {
+    confirmButtonText: "确认",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+      .then(async () => {
+        // 调用后端删除数据的函数
+        await deleteBookByGroupService(selectedItems.value);
+        // 清空选中项
+        selectedItems.value = [];
+        //刷新列表
+        await getBooks();
+        ElMessage({type: "success", message: "删除成功",});
+      })
+      .catch(() => {
+        ElMessage({type: "info", message: "删除已取消",});
+      });
 };
 
 //删除单本图书
 const deleteBook = (row) => {
-  // 调用后端删除数据的函数
-  deleteBookService(row);
-  //刷新列表
-  getBooks();
+  ElMessageBox.confirm("确认删除该图书吗?", "温馨提示", {
+    confirmButtonText: "确认",
+    cancelButtonText: "我再想想",
+    type: "warning",
+  }).then(async ()=>{
+    //调用接口
+    let result = await deleteBookService(row.id);
+    ElMessage({type: "success", message: "删除成功",});
+    await getBooks();
+  }).catch(()=>{
+    ElMessage({type: "info", message: "删除已取消",});
+  })
 };
 
 //修改图书信息
@@ -236,8 +284,8 @@ const editBook=async () => {
     }
     dialogVisible.value = false;
   } catch (error) {
-    console.error('编辑用户时出错：', error);
-    ElMessage.error('编辑用户时出错，请重试');
+    console.error('编辑图书时出错：', error);
+    ElMessage.error('编辑图书时出错，请重试');
   }
 }
 

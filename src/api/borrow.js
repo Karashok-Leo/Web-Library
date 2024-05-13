@@ -1,13 +1,7 @@
-import request from '@/utils/request.js'
+import request from "@/utils/request.js";
 
-// 借书
-export const borrowBook = (data) => request.post('/borrow', data);
+//获取借阅列表数据
+export const borrowBooksListService=()=>request.get('/borrowInfo');
 
-// 还书
-export const returnBook = (data) => request.post('/return', data);
-
-// 获取借阅记录
-export const getBorrowRecords = (data) => request.get('/borrow/record', { params: data });
-
-// 延迟还书
-export const delayReturnBook = (data) => request.post('/delay/return', data);
+//修改借阅信息
+export const editBorrowBooks=(id,data)=>request.put('/borrowInfo/'+id,data);

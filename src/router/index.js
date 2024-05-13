@@ -19,6 +19,7 @@ import ProfileVue from '@/views/index/user/Profile.vue'
 import BorrowVue from '@/views/index/user/Borrow.vue'
 import CollectVue from '@/views/index/user/Collect.vue'
 import CommentVue from '@/views/index/user/Comment.vue'
+import AdminManage from '@/views/Admin/AdminManage.vue'
 
 const routes = [
     {
@@ -45,6 +46,7 @@ const routes = [
             { path: '/admin/overview', component: Overview }, // 总览页面
             { path: '/admin/comment', component: Comment }, // 评论管理页面
             { path: '/admin/user', component: User }, // 用户管理页面
+            { path: '/admin/adminManage', component: AdminManage},//管理员管理
             { path: '/admin/book', component: Book }, // 图书管理页面
             { path: '/admin/borrow', component: Borrow }, // 借阅管理页面
             { path: '/admin/category', component: Category }, // 分类管理页面

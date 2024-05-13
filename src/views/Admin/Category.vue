@@ -5,13 +5,14 @@ import {
 } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 import { ElMessage} from 'element-plus'
+import {addCategoryService, categoryListService, delCategoryService} from "@/api/category.js";
 
 // 控制添加分类弹窗
 const dialogVisible = ref(false)
 const categories = ref([
   {
-  "category_id": 3,
-  "category_name": "美食",
+    "category_id": 3,
+    "category_name": "美食",
   },
   {
     "category_id": 4,
@@ -22,9 +23,8 @@ const categories = ref([
     "category_id": 5,
     "category_name": "军事",
   }
-  ])
+])
 const title = ref('')
-const selectedItems = ref([])
 
 // 添加分类数据模型
 const categoryModel = ref({
@@ -46,7 +46,7 @@ const rules = {
 // 获取所有分类列表
 const fetchCategories = async () => {
   try {
-    const result = await bookCategoryListService()
+    const result = await categoryListService()
     categories.value = result.data
   } catch (error) {
     console.error('Failed to fetch categories:', error)
@@ -58,8 +58,8 @@ fetchCategories()
 // 添加分类
 const addCategory = async () => {
   try {
-    const result = await bookCategoryAddService(categoryModel.value)
-    ElMessage.success(result.msg ? result.msg : '添加成功')
+    const result = await addCategoryService(categoryModel.value)
+    ElMessage.success(result.message ? result.message : '添加成功')
     await fetchCategories()
     dialogVisible.value = false
   } catch (error) {
@@ -79,8 +79,8 @@ const showDialog = (row) => {
 const editCategory = async () => {
   try {
     title.value="编辑分类";
-    const result = await bookCategoryUpdateService(categoryModel.value)
-    ElMessage.success(result.msg ? result.msg : '修改成功')
+    const result = await editCategoryService(categoryModel.value)
+    ElMessage.success(result.message ? result.message : '修改成功')
     await fetchCategories()
     dialogVisible.value = false
   } catch (error) {
@@ -92,29 +92,12 @@ const editCategory = async () => {
 // 删除单个分类
 const deleteCategory = async (category) => {
   try {
-    await bookCategoryDeleteService(category.category_id)
+    await delCategoryService(category.category_id)
     ElMessage.success('删除成功')
     await fetchCategories()
   } catch (error) {
     console.error('Failed to delete category:', error)
     ElMessage.error('删除分类失败')
-  }
-}
-
-// 批量删除分类
-// 处理选中事件
-const handleSelectionChange = (selected) => {
-  selectedItems.value = selected;
-};
-const deleteSelectedCategories = async () => {
-  try {
-    await deleteCommentService(selectedItems.value.map(item => item.category_id))
-    ElMessage.success('批量删除成功')
-    selectedItems.value = []
-    await fetchCategories()
-  } catch (error) {
-    console.error('Failed to delete selected categories:', error)
-    ElMessage.error('批量删除分类失败')
   }
 }
 
@@ -131,7 +114,6 @@ const clearData = () => {
         <span>图书分类</span>
         <div class="extra">
           <el-button type="primary" @click="dialogVisible = true; title = '添加分类'; clearData()">添加分类</el-button>
-          <el-button @click="deleteSelectedCategories">批量删除</el-button>
         </div>
       </div>
     </template>
@@ -139,7 +121,6 @@ const clearData = () => {
         ref="multipleTableRef"
         :data="categories"
         style="width: 100%"
-        @selection-change="handleSelectionChange"
         :cell-style="{ textAlign: 'center' }"
         :header-cell-style="{ 'text-align': 'center' }"
     >

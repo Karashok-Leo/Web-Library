@@ -1,62 +1,81 @@
 <script setup>
 import {
- Search
+  Search
 } from '@element-plus/icons-vue'
 import { ref } from 'vue'
-import {ElMessage} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
+import {borrowBooksListService, editBorrowBooks} from "@/api/borrow.js";
 //借阅列表数据
 const borrowBooks = ref([
   {
-    "book_id": 5,
     "book_name": "无感之谜",
     "user_name": "28038329@qq.com",
-    "state": "已还",
-    "categoryId": 2,
-    "borrowTime": "2023-09-03 11:55:30",
-    "backTime": "2023-09-03 11:55:30",
+    "user_id": 1,
+    "book_id": 2,
+    "book_status": 1,
+    "category_id": 2,
+    "created_at": "2024-05-12 09:08:53",
+    "updated_at": "2024-05-12 09:08:53",
+    "borrow_time": "2024-05-12",
+    "return_time": "2024-06-11",
+    "state":"已还"
   },
   {
     "book_id": 5,
     "book_name": "生活图书25",
     "user_name": "1010177289@qq.com",
-    "state": "借出",
+    "book_status": 0,
     "categoryId": 2,
-    "borrowTime": "2023-09-03 11:55:30",
-    "backTime": "2023-09-03 11:55:30",
+    "created_at": "2024-05-12 09:08:53",
+    "updated_at": "2024-05-12 09:08:53",
+    "borrow_time": "2024-05-12",
+    "return_time": "2024-06-11",
+    "state":"已还"
   },
   {
     "book_id": 5,
     "book_name": "生活图书27",
     "user_name": "111199",
-    "state": "已还",
+    "book_status": 1,
     "categoryId": 2,
-    "borrowTime": "2023-09-03 11:55:30",
-    "backTime": "2023-09-03 11:55:30",
+    "created_at": "2024-05-12 09:08:53",
+    "updated_at": "2024-05-12 09:08:53",
+    "borrow_time": "2024-05-12",
+    "return_time": "2024-06-11",
+    "state":"借出"
   },
 ])
-//借阅列表数据模型
-const borrowBooksModle = ref([
-])
+
 //搜索输入
 const input=ref();
 //分页条数据模型
 const pageNum = ref(1)//当前页
 const total = ref(20)//总条数
 const pageSize = ref(3)//每页条数
-// 假设 statusFilters 包含所有可能的状态过滤器
+//  statusFilters 包含所有可能的状态过滤器
 const statusFilters = [
   { text: '借出', value: '借出' },
   { text: '已还', value: '已还' },
 ];
 
-// 获取所有分类列表
+// 获取所有借阅列表
 const fetchBorrowBooks = async () => {
   try {
     const result = await borrowBooksListService()
-    borrowBooks.value = result.data
+    borrowBooks.value = result.data.map(book => {
+      // 根据状态属性值判断是否已还
+      const isReturned = book.book_status === 1;
+
+      // 添加 state 属性
+      return {
+        ...book,
+        state: isReturned ? '已还' : '借出'
+      };
+    });
+    total.value = result.data.length;
   } catch (error) {
-    console.error('Failed to fetch categories:', error)
-    ElMessage.error('获取分类列表失败')
+    console.error('获取列表失败', error)
+    ElMessage({type: "error", message: "获取列表失败",});
   }
 }
 fetchBorrowBooks()
@@ -79,7 +98,7 @@ const inputSearch = async () => {
     await fetchBorrowBooks(); // 如果搜索关键词为空，则显示所有列表
     return; // 如果搜索关键词为空，直接返回，不执行后续操作
   }
-  let result = await getBorrowBooks(); // 获取图书列表
+  let result = await borrowBooksListService(); // 获取列表
   try {
     // 根据书名进行模糊搜索
     total.value = result.data.filter(book =>
@@ -102,23 +121,46 @@ const filterTag = (value, row) => {
 };
 
 // 还书操作
-const backBook = (row) => {
-  // 执行还书操作
-  row.state="已还";
-  editBorrowBooks(row);
-  fetchBorrowBooks();
+const backBook = async (row) => {
+  try {
+    // 执行还书操作
+    row.status = 1;
+    let result = await editBorrowBooks(row.book_id,row);
+    if (result.status === 200) {
+      ElMessage.success(result.statusText || '还书成功');
+      await fetchBorrowBooks();
+    } else {
+      ElMessage.error(result.statusText || '还书失败');
+    }
+  } catch (error) {
+    console.error('还书时出错：', error);
+    ElMessage.error('还书时出错，请重试');
+  }
 };
 
 // 延期操作
-const delayTime = (row) => {
-  // 执行延期操作
-  // 将日期字符串解析为 Date 对象
-  const date = new Date(row.backTime);
-  date.setHours(date.getDay() + 30);
-  // 将新日期对象转换为字符串
-  row.backTime= date.toISOString();
-  delayBorrowBooks(row);
-  fetchBorrowBooks();
+const delayTime = async (row) => {
+  ElMessageBox.confirm("确认延期30天吗?", "温馨提示", {
+    confirmButtonText: "确认",
+    cancelButtonText: "我再想想",
+    type: "warning",
+  }).then(async ()=>{
+    // 执行延期操作
+    // 将日期字符串解析为 Date 对象
+    const date = new Date(row.return_time);
+    date.setHours(date.getDay() + 30);
+    // 将新日期对象转换为字符串
+    row.return_time= date.toISOString();
+    let result = await editBorrowBooks(row.book_id, row);
+    if (result.status === 200) {
+      ElMessage.success(result.statusText || '延期成功');
+      await fetchBorrowBooks();
+    } else {
+      ElMessage.error(result.statusText || '延期失败');
+    }
+  }).catch(()=>{
+    ElMessage({type: "info", message: "延期已取消",});
+  })
 };
 </script>
 <template>
@@ -163,8 +205,8 @@ const delayTime = (row) => {
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="借出时间" prop="borrowTime"></el-table-column>
-      <el-table-column label="应还时间" prop="backTime"></el-table-column>
+      <el-table-column label="借出时间" prop="borrow_time"></el-table-column>
+      <el-table-column label="应还时间" prop="return_time"></el-table-column>
       <el-table-column label="操作" width="100">
         <template #default="{ row }">
           <el-button circle plain type="primary" @click="backBook(row)">还书</el-button>

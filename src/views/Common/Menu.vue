@@ -10,17 +10,23 @@
             </el-menu-item>
             <el-menu-item index="/user/borrow">
                 <el-icon>
-                    <Collection />
+                    <Reading />
                 </el-icon>
                 <span>借阅中心</span>
             </el-menu-item>
-            <el-menu-item index="/user/message">
+            <el-menu-item index="/user/collect">
                 <el-icon>
-                    <Message />
+                    <Collection />
+                </el-icon>
+                <span>我的收藏</span>
+            </el-menu-item>
+            <el-menu-item index="/user/comment">
+                <el-icon>
+                    <Comment />
                 </el-icon>
                 <span>我的评论</span>
             </el-menu-item>
-            <el-menu-item index="/user/logout">
+            <el-menu-item index="/logout">
                 <el-icon>
                     <Setting />
                 </el-icon>
@@ -34,8 +40,9 @@
 
 import {
     Edit,
+    Reading,
     Collection,
-    Message,
+    Comment,
     Setting,
 } from '@element-plus/icons-vue';
 

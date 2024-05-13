@@ -5,17 +5,15 @@ import { ref } from 'vue'
 export const useTokenStore = defineStore(
     'token',
     () => {
-        //定义状态的内容
-
-        //1.响应式内容
+        // Token
         const token = ref('')
 
-        //2.定义一个函数，修改token的值
+        // 修改Token
         const setToken = (newToken) => {
             token.value = newToken
         }
 
-        //移除token的值
+        // 移除Token
         const removeToken = () => {
             token.value = ''
         }

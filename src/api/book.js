@@ -3,6 +3,11 @@ import request from "@/utils/request.js";
 //获取图书列表数据
 export const getBooksService=()=>request.get('/bookInfo');
 
+export const getBookInfo = (bookId) => request.get('/bookInfo/' + bookId);
+
+export const getCategoryInfoList = () => request.get('/categoryInfo');
+
+export const getCategoryInfo = (categoryId) => request.get('/categoryInfo/' + categoryId);
 
 //编辑图书信息
 export const editBookService=(id,data)=>request.put('/bookInfo/'+id,data);

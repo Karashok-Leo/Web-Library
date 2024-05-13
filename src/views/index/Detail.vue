@@ -119,6 +119,9 @@
       </div>
     </div>
 
+    <el-dialog v-model="QRCodeDialog" title="借阅二维码" width="500">
+      <el-image :src="QRCodeURL" lazy />
+    </el-dialog>
 
     <Footer />
   </div>
@@ -153,15 +156,20 @@ const bookId = ref(null)
 // 书籍信息
 const bookInfo = ref({})
 
-// 评论数据
-const commentList = ref([])
+// 二维码弹窗
+const QRCodeDialog = ref(false)
 
-const sortIndex = ref(0)
-const order = ref('recent') // 默认排序最新
-const commentRef = ref()
+// 二维码URL
+const QRCodeURL = ref('')
 
 // 收藏ID
 const collectId = ref(null)
+
+// 评论数据
+const commentList = ref([])
+
+// 评论输入框
+const commentRef = ref()
 
 onMounted(() => {
   bookId.value = parseInt(route.path.split('/')[2]);
@@ -209,7 +217,13 @@ const borrow = () => {
     ElMessageBox.alert('该书已借出，请选择其他书籍');
     return;
   }
-  ElMessageBox.confirm('是否确认借阅？');
+  ElMessageBox.confirm('是否确认借阅？').then(() => {
+    borrowBook(bookId.value).then((result) => {
+      const blob = new Blob([result.data], { type: "image/png" });
+      QRCodeURL.value = URL.createObjectURL(blob);
+      QRCodeDialog.value = true;
+    })
+  });
 }
 
 // 收藏

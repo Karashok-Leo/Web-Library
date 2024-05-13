@@ -7,7 +7,7 @@
             :cell-style="{ textAlign: 'center' }" :header-cell-style="{ 'text-align': 'center' }">
             <el-table-column label="图书编号" prop="book_id"> </el-table-column>
             <el-table-column label="图书名称" prop="book_name"></el-table-column>
-            <el-table-column label="评论内容" prop="content"></el-table-column>
+            <el-table-column label="评论内容" prop="content" min-width="400px"></el-table-column>
             <el-table-column label="日期" prop="created_at"></el-table-column>
             <el-table-column label="操作">
                 <template #default="{ row }">
@@ -41,7 +41,7 @@ const commentList = ref([])
 
 //分页模型
 const pageCurrent = ref(1)//当前页
-const pageTotal = ref(1)//总条数
+const pageTotal = ref(0)//总条数
 const pageSize = ref(10)//每页条数
 
 onMounted(() => {
@@ -65,7 +65,7 @@ const refreshCommentList = async () => {
 }
 
 // 跳转详情页
-const jumpDetail = (collect) => router.push('/detail/' + collect.book_id);
+const jumpDetail = (row) => router.push('/detail/' + row.book_id);
 
 //当每页条数发生了变化，调用此函数
 const onSizeChange = (size) => {

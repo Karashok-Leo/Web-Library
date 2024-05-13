@@ -62,7 +62,7 @@ const bookList = ref([])
 const recommendList = ref([])
 //分页模型
 const pageCurrent = ref(1)//当前页
-const pageTotal = ref(1)//总页数
+const pageTotal = ref(0)//总条数
 const pageSize = ref(10)//每页条数
 //分类
 const category = ref(0) //当前分类

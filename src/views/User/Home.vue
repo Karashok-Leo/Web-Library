@@ -5,8 +5,8 @@
 
         <div class="recommend">
             <span class="demonstration">每日推荐</span>
-            <el-carousel height="200px" motion-blur>
-                <el-carousel-item v-for="item in recommendList" :key="item.book_id">
+            <el-carousel motion-blur>
+                <el-carousel-item v-for="item in recommendList" :key="item.book_id" @click="jumpToDetail(item)">
                     <img :src="item.image_url" />
                 </el-carousel-item>
             </el-carousel>
@@ -23,16 +23,38 @@
                 @size-change="onSizeChange" @current-change="onCurrentChange" />
 
             <div class="book-list">
-                <div v-for="item in bookList" :key="item.id" @click="handleDetail(item)" class="book-item">
-                    <div class="book-cover">
-                        <img :src="item.image_url" />
-                    </div>
-                    <div class="book-info">
-                        <h3 class="info-name">{{ item.book_name }}</h3>
-                        <p class="info-author"> {{ item.author }} </p>
-                        <p class="info-text"> {{ item.text }} </p>
-                    </div>
-                </div>
+
+                <el-row :gutter="20">
+                    <el-col :span="6" v-for="book in bookList" :key="book.book_id">
+                        <div @click="jumpToDetail(book)" class="book-item">
+                            <div class="book-cover">
+                                <img :src="book.image_url" />
+                            </div>
+                            <div class="book-info">
+                                <h3 class="info-name">{{ book.book_name }}</h3>
+                                <p class="info-author"> {{ book.author }} </p>
+                                <p class="info-text"> {{ book.text }} </p>
+                            </div>
+                        </div>
+                    </el-col>
+                </el-row>
+
+                <!-- <el-row v-for="i in rowCount()">
+                    <el-col v-for="j in 4">
+                        <div v-if="(i - 1) * 4 + (j - 1) < bookList.length"
+                            @click="jumpToDetail(bookList[(i - 1) * 4 + (j - 1)])" class="book-item">
+                            <div class="book-cover">
+                                <img :src="bookList[(i - 1) * 4 + (j - 1)].image_url" />
+                            </div>
+                            <div class="book-info">
+                                <h3 class="info-name">{{ bookList[(i - 1) * 4 + (j - 1)].book_name }}</h3>
+                                <p class="info-author"> {{ bookList[(i - 1) * 4 + (j - 1)].author }} </p>
+                                <p class="info-text"> {{ bookList[(i - 1) * 4 + (j - 1)].text }} </p>
+                            </div>
+                        </div>
+                    </el-col>
+                </el-row> -->
+                
                 <el-empty v-if="bookList.length <= 0" description="暂无数据" />
             </div>
 
@@ -60,11 +82,11 @@ import Footer from '@/views/Common/Footer.vue'
 const bookList = ref([])
 // 推荐列表
 const recommendList = ref([])
-//分页模型
+// 分页模型
 const pageCurrent = ref(1)//当前页
 const pageTotal = ref(0)//总条数
 const pageSize = ref(10)//每页条数
-//分类
+// 分类
 const category = ref(0) //当前分类
 const categoryList = ref(['全部']) //分类列表
 
@@ -96,9 +118,11 @@ const switchCategory = () => {
 }
 
 // 跳转到详情页
-const handleDetail = (item) => {
+const jumpToDetail = (item) => {
     router.push('/detail/' + item.book_id)
 }
+
+const rowCount = () => Math.ceil(bookList.value.length / 4.0);
 
 //当每页条数发生了变化，调用此函数
 const onSizeChange = (size) => {

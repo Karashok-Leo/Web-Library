@@ -70,11 +70,17 @@
         </el-card>
 
         <el-card class="menu-card">
+          <el-row class="menu-button">
           <el-button type="primary" :icon="Plus" :disabled="bookInfo.current_number <= 0" @click="borrow()">{{
             bookInfo.current_number <= 0 ? '已借出' : '借阅' }} </el-button>
+          </el-row>
+          <el-row class="menu-button">
               <el-button type="primary" :icon="Collection" @click="collect()">{{ collectId ? '取消收藏' : '收藏'
                 }}</el-button>
+          </el-row>
+          <el-row class="menu-button">
               <el-button type="primary" :icon="Share" @click="share()">分享</el-button>
+          </el-row>
         </el-card>
       </div>
       <div class="content-bottom">
@@ -102,11 +108,7 @@
                 </el-icon>
                 <div class="person">
                   <div class="name">{{ item.username }}</div>
-                  <div class="time">{{ item.commentTime }}</div>
-                </div>
-                <div class="float-right">
-                  <span @click="like(item.id)">推荐</span>
-                  <span class="num">{{ item.likeCount }}</span>
+                  <div class="time">{{ item.updated_at }}</div>
                 </div>
               </div>
               <p class="comment-content">{{ item.content }}</p>
@@ -146,9 +148,11 @@ import { ElMessageBox } from 'element-plus'
 import router from '@/router';
 import { useRoute } from "vue-router/dist/vue-router";
 import { useTokenStore } from '@/stores/token';
+import { useUserStore } from '@/stores/user';
 
 const route = useRoute();
 const tokenStore = useTokenStore();
+const userStore = useUserStore();
 
 // 书籍ID
 const bookId = ref(null)
@@ -193,13 +197,19 @@ const checkLogin = () => {
     ElMessageBox.alert('请先登录').then(() => router.push('/login'))
     return false;
   }
+  else if (!userStore.userInfo.user_id && userStore.userInfo.admin_id) {
+    ElMessageBox.alert('当前为管理员账户，请先作为用户登录')
+    .then(() => router.push('/login'))
+    .catch(()=>{})
+    return false;
+  }
   return true;
 }
 
 // 获取收藏ID
 const refreshCollectId = () => {
-  if (!tokenStore.token) return;
-  getCollect().then(result => {
+  if (!tokenStore.token || !userStore.userInfo.user_id) return;
+  getCollect(userStore.userInfo.user_id).then(result => {
     result.data.data.forEach(collect => {
       if (collect.book_id === bookId.value) {
         collectId.value = collect.collection_id;
@@ -229,7 +239,7 @@ const borrow = () => {
 // 收藏
 const collect = () => {
   if (!checkLogin()) return;
-  let result = collectId.value ? deleteCollect(collectId.value) : addCollect(bookId.value);
+  let result = collectId.value ? deleteCollect(collectId.value) : addCollect(bookId.value, userStore.userInfo.user_id);
   result.then(() => refreshCollectId());
 }
 
@@ -286,25 +296,29 @@ const refreshCommentList = () => getCommentByBookId(bookId.value).then(result =>
     // text-align: left;
     // padding: 0;
     margin-right: 40px;
+    width: 400px;
+    margin-bottom: auto;
 
     .cell-item {
+      margin: auto;
       display: flex;
       align-items: center;
     }
   }
 
   .menu-card {
-    display: block;
-    justify-content: space-between;
-    flex-direction: row;
+    display: flex;  
+    flex-direction: column;
+    margin-bottom: auto;
 
     .menu-button {
+      margin-top: 15px;
+      width: 100%;
       color: #152844;
       font-weight: 600;
       font-size: 16px;
       line-height: 18px;
-      display: block;
-      height: 18px;
+      height: 30px;
     }
   }
 

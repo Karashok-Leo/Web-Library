@@ -19,7 +19,7 @@
       <!-- 底部两个区域，一个显示热门借阅排名柱状图，一个显示热门分类饼状图 -->
       <div class="bottom-charts">
         <el-card class="chart-card" title="热门借阅排名">
-          <span>热门借阅排名"</span>
+          <span>热门借阅排名</span>
           <el-divider />
           <div class="echarts-box">
             <div id="barEcharts" :style="{ width: '600px', height: '300px' }"></div>
@@ -63,7 +63,7 @@ import {ref, onMounted, onUnmounted} from 'vue';
   ]);
   const barChartData = {
     categories: ['图书A', '图书B', '图书C', '图书D', '图书E'],
-    seriesData: [150, 120, 200, 180, 160]
+    seriesData: [20, 13, 20, 18, 8]
   };
   const pieChartData = {
     categories: ['小说', '历史', '科幻', '传记', '教育'],

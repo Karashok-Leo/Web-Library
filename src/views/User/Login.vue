@@ -278,6 +278,13 @@ body {
 
 }
 
+.logo{
+  position: absolute;
+  height: 50px;
+  top: 20px;
+  left: 20px;
+}
+
 .login-box {
     position: absolute;
     top: 100px;

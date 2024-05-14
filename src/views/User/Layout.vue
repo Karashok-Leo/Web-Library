@@ -3,7 +3,7 @@
     <Header class="header"/>
     <el-container class="content">
         <div class="sidebar">
-            <h1>Username</h1>
+            <h1>个人中心</h1>
             <Menu />
         </div>
         <el-main class="main">

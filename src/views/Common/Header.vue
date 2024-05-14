@@ -34,12 +34,12 @@
                 <el-menu-item index="/admin/user">用户管理</el-menu-item>
                 <el-menu-item index="/admin/adminManage" v-if="userStore.userInfo?.is_super_admin">管理员管理
                 </el-menu-item>
-                <el-sub-menu>
+                <!-- <el-sub-menu>
                     <template #title>日志管理</template>
                     <el-menu-item index="/admin/login-log">登录日志</el-menu-item>
                     <el-menu-item index="/admin/option-log">操作日志</el-menu-item>
                     <el-menu-item index="/admin/error-log">错误日志</el-menu-item>
-                </el-sub-menu>
+                </el-sub-menu> -->
                 <el-menu-item index="/logout">退出登录</el-menu-item>
             </el-sub-menu>
 

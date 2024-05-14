@@ -66,9 +66,9 @@
             {{ '我是' + (isAdmin ? '用户' : '管理员') }}
         </el-link>
 
-        <el-link class="forget" type="primary" :underline="false" v-if="!isAdmin" :disabled="isRegister">
+        <!-- <el-link class="forget" type="primary" :underline="false" v-if="!isAdmin" :disabled="isRegister">
             忘记密码？
-        </el-link>
+        </el-link> -->
         <el-link class="register" type="info" :underline="false" v-if="!isAdmin"
             @click="isRegister = !isRegister; clearFormData()">
             {{ isRegister ? '登录' : '注册' }}

@@ -32,6 +32,7 @@
 
 import { ref } from 'vue'
 import { onMounted } from 'vue';
+import { useUserStore } from '@/stores/user';
 
 import router from '@/router';
 
@@ -54,7 +55,7 @@ onMounted(() => {
 
 // 刷新收藏列表
 const refreshCollectList = async () => {
-    let result = await getCollect();
+    let result = await getCollect(useUserStore().userInfo.user_id);
     if (result.data.success)
         collectList.value = result.data.data;
     // 获取图书信息

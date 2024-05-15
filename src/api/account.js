@@ -9,6 +9,9 @@ export const userRegisterService = (data) => request.post('/userRegister', data)
 //编辑用户资料
 export const editProfileService = (userId, data) => request.put('/userInfo/' + userId, data);
 
+//修改用户密码
+export const editUserPasswordService = (userId, username, password) => request.put('/userInfo/' + userId, { username: username, password: password });
+
 //用户退出接口
 export const userLogoutService = () => request.post('/logout');
 

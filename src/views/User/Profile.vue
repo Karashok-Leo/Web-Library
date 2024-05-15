@@ -28,6 +28,8 @@
 
             <el-descriptions-item label="身份">{{ profile.status ? '教师' : '学生' }}</el-descriptions-item>
 
+            <el-button type="primary" @click="editPasswordDialog = true">修改密码</el-button>
+
         </el-descriptions>
         <template #footer>Footer content</template>
     </el-card>
@@ -44,14 +46,35 @@
       </div>
     </template>
     </el-dialog>
+    
+  <el-dialog v-model="editPasswordDialog" title="修改密码" width="30%">
+    <el-form :model="editPasswordData" :rules="editPasswordRules" label-width="100px" style="padding-right: 30px">
+      <el-form-item prop="old_pwd">
+        <el-input v-model="passwordModel.old_pwd" :prefix-icon="Lock" type="password" placeholder="请输入旧密码"/>
+      </el-form-item>
+      <el-form-item prop="new_pwd">
+        <el-input v-model="passwordModel.new_pwd":prefix-icon="Lock" type="password" placeholder="请输入新密码"/>
+      </el-form-item>
+      <el-form-item prop="re_pwd">
+        <el-input v-model="passwordModel.re_pwd":prefix-icon="Lock" type="password" placeholder="请再次输入新密码"/>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="editPasswordDialog = false">取消</el-button>
+        <el-button type="primary" @click="editPassword"> 确认 </el-button>
+      </span>
+    </template>
+  </el-dialog>
 
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { useUserStore } from '@/stores/user';
-import { editProfileService } from '@/api/account';
+import { editProfileService, editUserPasswordService } from '@/api/account';
 import { ElMessage } from 'element-plus';
+import { Lock } from '@element-plus/icons-vue';
 
 const userStore = useUserStore();
 
@@ -59,6 +82,40 @@ const profile = ref(userStore.userInfo);
 
 const editAvatarDialog = ref(false);
 const editAvatarUrl = ref('');
+
+const editPasswordDialog = ref(false);
+
+// 修改密码数据
+const editPasswordData= ref({
+    old_pwd: '',
+    new_pwd: '',
+    re_pwd: ''
+});
+
+// 修改密码校验规则
+const editPasswordRules = {
+    new_pwd: [
+        { required: true, message: "密码不能为空", trigger: 'blur' },
+        { min: 5, max: 16, message: "5-16位非空字符", trigger: 'blur' }
+    ],
+    re_pwd: [
+        {
+            validator: (rule, value, callback) => {
+                switch (value) {
+                    case '':
+                        callback(new Error('请再次输入密码'));
+                        break;
+                    case editPasswordData.value.new_pwd:
+                        callback();
+                        break;
+                    default:
+                        callback(new Error('两次输入密码不一致'));
+                }
+            },
+            trigger: 'blur'
+        }
+    ]
+};
 
 const editProfile = async () => {
     let result = await editProfileService(profile.value.user_id, {
@@ -71,6 +128,16 @@ const editProfile = async () => {
     if (result.data.success) {
         userStore.setUser();
         ElMessage.success('修改成功');
+    } else
+        ElMessage.error('修改失败');
+};
+
+const editPassword = async () => {
+    let result=await editUserPasswordService(userStore.userInfo.user_id, userStore.userInfo.username, editPasswordData.value.new_pwd);
+    if (result.data.success) {
+        userStore.setUser();
+        ElMessage.success('修改成功');
+        editPasswordDialog.value = false;
     } else
         ElMessage.error('修改失败');
 };

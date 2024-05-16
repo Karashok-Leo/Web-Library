@@ -32,7 +32,12 @@ instance.interceptors.response.use(
         if (response.status === 401) {
             ElMessage.error("请先登录")
             router.push('/login')
-        } else ElMessage.error(response.data.message ?? '响应服务异常')
+        }
+        else if (response.status === 403){
+            ElMessage.error("请先登录")
+            router.push('/login/admin')
+        }
+        else ElMessage.error(response.data.message ?? '响应服务异常')
         console.log(err)
         return Promise.reject(err);//异步的状态转化成失败的状态
     }

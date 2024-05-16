@@ -2,11 +2,10 @@
     <div id="background">
         <img class="logo" src="/icon.svg" alt="Web Library logo" />
         <div class="login-box">
-            <div class="content" style="background-color: #eff0f4;">
-                <h2>{{ '用户' + (isRegister ? '注册' : '登录') }}</h2>
+            <div class="content" style="background-color:#f5d9ea">
+                <h2>管理员登录</h2>
 
-                <el-form ref="loginForm" size="large" autocomplete="off" :rules="loginRules" :model="loginData"
-                    v-if="!isRegister">
+                <el-form ref="loginForm" size="large" autocomplete="off" :rules="loginRules" :model="loginData">
                     <el-form-item prop="username">
                         <el-input class="form-item" :prefix-icon="User" placeholder="请输入用户名"
                             v-model="loginData.username" />
@@ -22,66 +21,26 @@
                         </el-button>
                     </el-form-item>
                 </el-form>
-
-                <el-form ref="registerForm" size="large" autocomplete="off" :rules="registerRules" :model="registerData"
-                    v-if="isRegister">
-                    <el-form-item prop="username">
-                        <el-input class="form-item" :prefix-icon="User" placeholder="请输入用户名"
-                            v-model="registerData.username" />
-                    </el-form-item>
-                    <el-form-item prop="password">
-                        <el-input class="form-item" :prefix-icon="Lock" type="password" placeholder="请输入密码"
-                            v-model="registerData.password" />
-                    </el-form-item>
-                    <el-form-item prop="repassword">
-                        <el-input class="form-item" :prefix-icon="Lock" type="password" placeholder="请再次输入密码"
-                            v-model="registerData.repassword" />
-                    </el-form-item>
-                    <el-form-item prop="email">
-                        <el-input class="form-item" :prefix-icon="Message" type="email" placeholder="请输入邮箱"
-                            v-model="registerData.email" />
-                    </el-form-item>
-                    <div class="form-item" style="display: flex;">
-                        <el-form-item>
-                            <el-input :prefix-icon="Key" type="text" placeholder="请输入验证码"
-                                v-model="registerData.captcha" />
-                        </el-form-item>
-                        <el-button id="sendCode" class="form-item" type="primary" plain auto-insert-space
-                            :disabled="verifyCounting > 0" @click="sendVerifyCode">
-                            {{ verifyCounting > 0 ? verifyCounting + '秒后重新获取' : '发送验证码' }}
-                        </el-button>
-                    </div>
-                    <el-form-item>
-                        <el-button id="submit" class="form-item" type="primary" plain auto-insert-space
-                            @click="submit(registerForm)">
-                            注册
-                        </el-button>
-                    </el-form-item>
-                </el-form>
             </div>
         </div>
 
-        <el-link class="admin" type="info" :underline="false" @click="jumpToAdminLogin(); clearFormData()">
-            我是管理员
+        <el-link class="admin" type="info" :underline="false" @click="jumpToUserLogin(); clearFormData()">
+            '我是用户'
         </el-link>
 
         <!-- <el-link class="forget" type="primary" :underline="false" v-if="!isAdmin" :disabled="isRegister">
             忘记密码？
         </el-link> -->
-        <el-link class="register" type="info" :underline="false" @click="isRegister = !isRegister; clearFormData()">
-            {{ isRegister ? '登录' : '注册' }}
-        </el-link>
     </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { User, Lock, Message, Key } from '@element-plus/icons-vue';
+import { User, Lock } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 
 //导入封装好的api接口
-import { userLoginService, userRegisterService } from '@/api/account';
-import { verifyCounting, startCounting, sendVerifyCodeService } from '@/api/verify';
+import { adminLoginService } from '@/api/account';
 
 import router from '@/router';
 import { useUserStore } from '@/stores/user.js';
@@ -91,24 +50,11 @@ const userStore = useUserStore();
 const tokenStore = useTokenStore();
 
 const loginForm = ref(null);
-const registerForm = ref(null);
-
-//控制注册与登录表单的显示，默认显示登录
-const isRegister = ref(false);
 
 //定义登录表单数据模型
 const loginData = ref({
     username: '',
     password: ''
-});
-
-//定义注册表单数据模型
-const registerData = ref({
-    username: '',
-    password: '',
-    repassword: '',
-    email: '',
-    captcha: ''
 });
 
 //定义登录表单校验规则
@@ -123,50 +69,10 @@ const loginRules = {
     ]
 };
 
-//定义注册表单校验规则
-const registerRules = {
-    username: [
-        { required: true, message: '用户名不能为空', trigger: 'blur' },
-        { min: 5, max: 16, message: '5-16位非空字符', trigger: 'blur' }
-    ],
-    password: [
-        { required: true, message: "密码不能为空", trigger: 'blur' },
-        { min: 5, max: 16, message: "5-16位非空字符", trigger: 'blur' }
-    ],
-    repassword: [
-        {
-            validator: (rule, value, callback) => {
-                switch (value) {
-                    case '':
-                        callback(new Error('请再次输入密码'));
-                        break;
-                    case registerData.value.password:
-                        callback();
-                        break;
-                    default:
-                        callback(new Error('两次输入密码不一致'));
-                }
-            },
-            trigger: 'blur'
-        }
-    ],
-    email: [
-        { required: true, message: '邮箱不能为空', trigger: 'blur' },
-        { type: 'email', message: '邮箱格式不正确', trigger: 'blur' }
-    ]
-};
-
 const clearFormData = () => {
     loginData.value = {
         username: '',
         password: ''
-    };
-    registerData.value = {
-        username: '',
-        password: '',
-        repassword: '',
-        email: '',
-        captcha: ''
     };
 };
 
@@ -176,58 +82,25 @@ const submit = (form) => {
         return;
     }
     form.validate((valid) => {
-        if (valid) {
-            if (isRegister.value)
-                userRegister();
-            else
-                userLogin();
-        } else ElMessage.error('请正确填写信息');
+        if (valid) adminLogin();
+        else ElMessage.error('请正确填写信息');
     });
 };
 
-const userLogin = async () => {
-    let result = await userLoginService(loginData.value);
+const adminLogin = async () => {
+    let result = await adminLoginService(loginData.value);
     if (result.data.success) {
         ElMessage.success('登录成功');
         tokenStore.setToken(result.data.data.accessToken);
         userStore.setUser();
-        router.push('/');
+        router.push('/admin');
     } else {
         ElMessage.error('登录失败');
     }
 };
 
-const userRegister = async () => {
-    let data = {
-        username: registerData.value.username,
-        password: registerData.value.password,
-        email: registerData.value.email,
-        captcha: registerData.value.captcha,
-        status: 0
-    };
-    let result = await userRegisterService(data);
-    if (result.data.success) {
-        ElMessage.success('注册成功');
-        isRegister.value = false;
-        clearFormData();
-    } else {
-        ElMessage.error('注册失败');
-    }
-};
-
-const sendVerifyCode = async () => {
-
-    let result = await sendVerifyCodeService(registerData.value.email, 0);
-    console.log(result);
-    if (result.data.success) {
-        startCounting();
-        ElMessage.success('验证码发送成功');
-    } else
-        ElMessage.error('验证码发送失败');
-};
-
-const jumpToAdminLogin = () => {
-    router.push('/login/admin');
+const jumpToUserLogin = () => {
+    router.push('/login');
 };
 
 </script>

@@ -4,6 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeVue from '@/views/User/Home.vue'
 import DetailVue from '@/views/User/Detail.vue'
 import LoginVue from '@/views/User/Login.vue'
+import AdminLoginVue from '@/views/User/AdminLogin.vue'
 import { Logout } from '@/views/User/Logout.js'
 import LayoutVue from '@/views/User/Layout.vue'
 import ProfileVue from '@/views/User/Profile.vue'
@@ -39,6 +40,10 @@ const routes = [
     {
         path: '/login',
         component: LoginVue // 登录页面
+    },
+    {
+        path: '/login/admin',
+        component: AdminLoginVue // 登录页面
     },
     {
         path: '/logout',

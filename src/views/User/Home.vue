@@ -2,15 +2,26 @@
 
     <Header class="header" />
     <el-container class="container">
+        <div class="carousel-container">
+            <div class="recommend">
+                <h1 class="demonstration">每日推荐</h1>
+                <el-carousel motion-blur>
+                    <el-carousel-item v-for="item in recommendList" :key="item.book_id" @click="jumpToDetail(item)">
+                        <img :src="item.image_url" />
+                    </el-carousel-item>
+                </el-carousel>
+            </div>
 
-        <div class="recommend">
-            <span class="demonstration">每日推荐</span>
-            <el-carousel motion-blur>
-                <el-carousel-item v-for="item in recommendList" :key="item.book_id" @click="jumpToDetail(item)">
-                    <img :src="item.image_url" />
-                </el-carousel-item>
-            </el-carousel>
+            <div class="notice">
+                <h1 class="demonstration">公告</h1>
+                <el-carousel motion-blur>
+                    <el-carousel-item v-for="item in noticeList" @click="">
+                        <h3>{{ item }}</h3>
+                    </el-carousel-item>
+                </el-carousel>
+            </div>
         </div>
+
 
         <div class="content">
 
@@ -39,22 +50,6 @@
                     </el-col>
                 </el-row>
 
-                <!-- <el-row v-for="i in rowCount()">
-                    <el-col v-for="j in 4">
-                        <div v-if="(i - 1) * 4 + (j - 1) < bookList.length"
-                            @click="jumpToDetail(bookList[(i - 1) * 4 + (j - 1)])" class="book-item">
-                            <div class="book-cover">
-                                <img :src="bookList[(i - 1) * 4 + (j - 1)].image_url" />
-                            </div>
-                            <div class="book-info">
-                                <h3 class="info-name">{{ bookList[(i - 1) * 4 + (j - 1)].book_name }}</h3>
-                                <p class="info-author"> {{ bookList[(i - 1) * 4 + (j - 1)].author }} </p>
-                                <p class="info-text"> {{ bookList[(i - 1) * 4 + (j - 1)].text }} </p>
-                            </div>
-                        </div>
-                    </el-col>
-                </el-row> -->
-                
                 <el-empty v-if="bookList.length <= 0" description="暂无数据" />
             </div>
 
@@ -82,6 +77,13 @@ import Footer from '@/views/Common/Footer.vue'
 const bookList = ref([])
 // 推荐列表
 const recommendList = ref([])
+// 公告列表
+const noticeList = ref([
+    "公告1: 图书借阅系统正式上线，欢迎大家使用！",
+    "公告2: 图书借阅系统正式上线，欢迎大家使用！",
+    "公告3: 图书借阅系统正式上线，欢迎大家使用！",
+    "公告4: 图书借阅系统正式上线，欢迎大家使用！",
+])
 // 分页模型
 const pageCurrent = ref(1)//当前页
 const pageTotal = ref(0)//总条数
@@ -97,6 +99,8 @@ onMounted(() => {
     refreshBookList();
     // 获取推荐列表
     refreshRecommendList();
+    // 获取公告列表
+    // refreshNoticeList();
 });
 
 const refreshCategoryList = () => getCategoryInfoList().then(result => categoryList.value = [...categoryList.value, ...result.data.data.map(item => item.category_name)]);
@@ -146,11 +150,24 @@ const onCurrentChange = (num) => {
     align-items: center;
 }
 
+.carousel-container {
+    display: flex;
+    width: 100%;
+}
+
 .recommend {
     width: 60%;
     margin-top: 50px;
-    margin-left: 16%;
-    margin-right: 16%;
+    margin-left: 20%;
+    margin-right: 2%;
+    text-align: center;
+}
+
+.notice {
+    width: 60%;
+    margin-top: 50px;
+    margin-left: 2%;
+    margin-right: 20%;
     text-align: center;
 }
 

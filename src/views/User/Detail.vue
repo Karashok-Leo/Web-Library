@@ -71,15 +71,15 @@
 
         <el-card class="menu-card">
           <el-row class="menu-button">
-          <el-button type="primary" :icon="Plus" :disabled="bookInfo.current_number <= 0" @click="borrow()">{{
-            bookInfo.current_number <= 0 ? '已借出' : '借阅' }} </el-button>
+            <el-button type="primary" :icon="Plus" :disabled="bookInfo.current_number <= 0" @click="borrow()">{{
+              bookInfo.current_number <= 0 ? '已借出' : '借阅' }} </el-button>
           </el-row>
           <el-row class="menu-button">
-              <el-button type="primary" :icon="Collection" @click="collect()">{{ collectId ? '取消收藏' : '收藏'
-                }}</el-button>
+            <el-button type="primary" :icon="Collection" @click="collect()">{{ collectId ? '取消收藏' : '收藏'
+              }}</el-button>
           </el-row>
           <el-row class="menu-button">
-              <el-button type="primary" :icon="Share" @click="share()">分享</el-button>
+            <el-button type="primary" :icon="Share" @click="share()">分享</el-button>
           </el-row>
         </el-card>
       </div>
@@ -199,8 +199,8 @@ const checkLogin = () => {
   }
   else if (!userStore.userInfo.user_id && userStore.userInfo.admin_id) {
     ElMessageBox.alert('当前为管理员账户，请先作为用户登录')
-    .then(() => router.push('/login'))
-    .catch(()=>{})
+      .then(() => router.push('/login'))
+      .catch(() => { })
     return false;
   }
   return true;
@@ -253,9 +253,11 @@ const share = () => {
 
 const comment = () => {
   if (!checkLogin()) return;
-  leaveComment(commentRef.value, bookId.value);
-  commentRef.value = '';
-  refreshCommentList();
+  let result = leaveComment(commentRef.value, bookId.value);
+  if (result.data.success) {
+    commentRef.value = '';
+    refreshCommentList();
+  }
 }
 
 const refreshCommentList = () => getCommentByBookId(bookId.value).then(result => commentList.value = result.data.data);
@@ -307,7 +309,7 @@ const refreshCommentList = () => getCommentByBookId(bookId.value).then(result =>
   }
 
   .menu-card {
-    display: flex;  
+    display: flex;
     flex-direction: column;
     margin-bottom: auto;
 

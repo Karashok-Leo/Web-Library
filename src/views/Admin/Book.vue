@@ -137,7 +137,7 @@ getBooks()
 
 //回显文章分类
 const getCategorys = async () => {
-  let result = await articleCategorysService();
+  let result = await categoryListService();
 
   categorys.value = result.data.data;
 }
@@ -164,6 +164,7 @@ const uploadSuccess = (result) => {
 
 //添加图书
 import {ElMessage, ElMessageBox} from 'element-plus'
+import { categoryListService } from '@/api/category'
 const addBook = async () => {
   try {
     //调用接口
@@ -257,7 +258,7 @@ const deleteBook = (row) => {
     type: "warning",
   }).then(async ()=>{
     //调用接口
-    let result = await deleteBookService(row.id);
+    let result = await deleteBookService(row.book_id);
     ElMessage({type: "success", message: "删除成功",});
     await getBooks();
   }).catch(()=>{

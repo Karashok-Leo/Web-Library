@@ -10,12 +10,21 @@ import { useTokenStore } from '@/stores/token.js';
 import { ElMessage } from 'element-plus'
 //定义一个变量,记录公共的前缀  ,  baseURL
 const baseURL = '/api';
-const ignoreUrl = ['/adminLogin', '/emailLogin', '/userLogin', '/userRegister', '/captcha', '/bookInfo', '/categoryInfo', '/comment/book']; //忽略的请求路径
+const ignored = [
+    { url: '/adminLogin' },
+    { url: '/emailLogin' },
+    { url: '/userLogin' },
+    { url: '/userRegister' },
+    { url: '/captcha' },
+    { url: '/bookInfo', method: 'get' },
+    { url: '/categoryInfo', method: 'get' },
+    { url: '/comment/book' }
+]; //忽略的请求路径
 const instance = axios.create({ baseURL })
 
-const isUrlIgnored = (url) => {
+const isUrlIgnored = (url, method) => {
     let ignore = false;
-    ignoreUrl.forEach(item => { if (url.startsWith(item)) ignore = true; });
+    ignored.forEach(item => { if (url.startsWith(item.url) && item.method && method === item.method) ignore = true; });
     return ignore;
 };
 
@@ -33,7 +42,7 @@ instance.interceptors.response.use(
             ElMessage.error("请先登录")
             router.push('/login')
         }
-        else if (response.status === 403){
+        else if (response.status === 403) {
             ElMessage.error("请先登录")
             router.push('/login/admin')
         }
@@ -47,7 +56,7 @@ instance.interceptors.response.use(
 instance.interceptors.request.use(
     config => {
         console.log('正在请求路径：' + config.url);
-        if (isUrlIgnored(config.url)) {
+        if (isUrlIgnored(config.url, config.method)) {
             console.log('该请求路径无需设置请求头');
             return config;
         } else {

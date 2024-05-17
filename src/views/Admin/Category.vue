@@ -79,7 +79,7 @@ const showDialog = (row) => {
 const editCategory = async () => {
   try {
     title.value="编辑分类";
-    const result = await editCategoryService(categoryModel.value)
+    const result = await editCategoryService(categoryModel.value.category_id,categoryModel.value)
     ElMessage.success(result.message ? result.message : '修改成功')
     await fetchCategories()
     dialogVisible.value = false
@@ -142,11 +142,11 @@ const clearData = () => {
     <!-- 添加分类弹窗 -->
     <el-dialog v-model="dialogVisible" :title="title" width="30%">
       <el-form :model="categoryModel" :rules="rules" label-width="100px" style="padding-right: 30px">
+        <el-form-item label="分类ID" prop="categoryAlias" disabled>
+          <el-input v-model="categoryModel.category_id" minlength="1" maxlength="15"></el-input>
+        </el-form-item>
         <el-form-item label="分类名称" prop="categoryName">
           <el-input v-model="categoryModel.category_name" minlength="1" maxlength="10"></el-input>
-        </el-form-item>
-        <el-form-item label="分类ID" prop="categoryAlias">
-          <el-input v-model="categoryModel.category_id" minlength="1" maxlength="15"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>

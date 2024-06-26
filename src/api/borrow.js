@@ -12,3 +12,9 @@ export const borrowBooksListByUserId = () => request.get('/borrowInfo/user/' + u
 
 //修改借阅信息
 export const editBorrowBooks = (id, data) => request.put('/borrowInfo/' + id, data);
+
+//延期
+export const updateReturnDate = (id,data) => request.put('/borrowInfo/' + id, data);
+
+//还书
+export const updateBorrowInfo = (id,data) => request.put('/borrowInfo/' + id, data);

@@ -4,7 +4,7 @@ import {
 } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 import {ElMessage, ElMessageBox} from "element-plus";
-import {borrowBooksListService, editBorrowBooks} from "@/api/borrow.js";
+import {borrowBooksListService, editBorrowBooks, updateBorrowInfo, updateReturnDate} from "@/api/borrow.js";
 //借阅列表数据
 const borrowBooks = ref([
   {
@@ -124,8 +124,13 @@ const filterTag = (value, row) => {
 const backBook = async (row) => {
   try {
     // 执行还书操作
-    row.status = 1;
-    let result = await editBorrowBooks(row.book_id,row);
+    // row.status = 1;
+    let jsonObject = {
+      "book_status": 1,
+      "is_renew": 0
+    }
+    let result = await updateBorrowInfo(row.borrow_id,jsonObject)
+    console.log(row.borrow_id)
     if (result.status === 200) {
       ElMessage.success(result.statusText || '还书成功');
       await fetchBorrowBooks();
@@ -146,12 +151,17 @@ const delayTime = async (row) => {
     type: "warning",
   }).then(async ()=>{
     // 执行延期操作
-    // 将日期字符串解析为 Date 对象
-    const date = new Date(row.return_time);
-    date.setHours(date.getDay() + 30);
-    // 将新日期对象转换为字符串
-    row.return_time= date.toISOString();
-    let result = await editBorrowBooks(row.book_id, row);
+    // // 将日期字符串解析为 Date 对象
+    // const date = new Date(row.return_time);
+    // date.setHours(date.getDay() + 30);
+    // // 将新日期对象转换为字符串
+    // row.return_time= date.toISOString();
+    let jsonObject = {
+      "book_status": 0,
+      "is_renew": 1
+    }
+    let result = await updateReturnDate(row.borrow_id, jsonObject);
+    console.log(row.borrow_id)
     if (result.status === 200) {
       ElMessage.success(result.statusText || '延期成功');
       await fetchBorrowBooks();

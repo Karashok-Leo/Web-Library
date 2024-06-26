@@ -265,7 +265,7 @@ body {
 .login-box {
     position: absolute;
     top: 100px;
-    left: 530px;
+    left: 600px;
     display: flex;
     justify-content: center;
     opacity: 0.9;

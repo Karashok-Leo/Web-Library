@@ -62,8 +62,8 @@ import {ref, onMounted, onUnmounted} from 'vue';
     { title: '逾期未还', tag: '逾', tagType: 'green', value: 50, description: '共 20 人' }
   ]);
   const barChartData = {
-    categories: ['图书A', '图书B', '图书C', '图书D', '图书E'],
-    seriesData: [20, 13, 20, 18, 8]
+    categories: ['小说', '科幻', '教育', '传记', '历史'],
+    seriesData: [20, 13, 12, 9, 8]
   };
   const pieChartData = {
     categories: ['小说', '历史', '科幻', '传记', '教育'],

@@ -6,7 +6,7 @@
             <div class="recommend">
                 <h1 class="demonstration">每日推荐</h1>
                 <el-carousel motion-blur>
-                    <el-carousel-item v-for="item in recommendList" :key="item.book_id" @click="jumpToDetail(item)">
+                    <el-carousel-item v-for="item in recommendList" :key="item.book_id" @click="jumpToDetail(item)" >
                         <img :src="item.image_url" />
                     </el-carousel-item>
                 </el-carousel>
@@ -113,7 +113,7 @@ const refreshBookList = () => getBooksService().then(result => {
 });
 
 // 刷新推荐列表
-const refreshRecommendList = () => getBooksService().then(result => recommendList.value = result.data.data.sort((a, b) => a.borrow_count - b.borrow_count).slice(0, 4));
+const refreshRecommendList = () => getBooksService().then(result => recommendList.value = result.data.data.sort((a, b) => b.borrow_count - a.borrow_count).slice(0, 4));
 
 // 切换分类
 const switchCategory = () => {
@@ -173,6 +173,7 @@ const onCurrentChange = (num) => {
 
 .content {
     width: 60%;
+    padding: 20px;
     margin-left: 16%;
     margin-right: 16%;
     display: flex;

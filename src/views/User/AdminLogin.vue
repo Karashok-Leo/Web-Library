@@ -25,7 +25,7 @@
         </div>
 
         <el-link class="admin" type="info" :underline="false" @click="jumpToUserLogin(); clearFormData()">
-            '我是用户'
+            我是用户
         </el-link>
 
         <!-- <el-link class="forget" type="primary" :underline="false" v-if="!isAdmin" :disabled="isRegister">
@@ -138,7 +138,7 @@ body {
 .login-box {
     position: absolute;
     top: 100px;
-    left: 530px;
+    left: 600px;
     display: flex;
     justify-content: center;
     opacity: 0.9;
